@@ -1,0 +1,74 @@
+# System/tool-specific ignores
+.DS_Store
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE specific
+.vscode/
+.idea/
+*.csproj
+*.sln
+
+# Build outputs
+build/
+dist/
+
+# Logs
+*.log
+logs/
+
+# User data
+user_data/
+
+# Trae specific
+.trae/
+
+# OS specific
+Thumbs.db
+
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+.venv/
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Data files (large or generated)
+data/*
+!data/.gitkeep
+
+# Configuration files (local)
+.env
+config.local.*
+
+# Testing
+.coverage
+.pytest_cache/
+test-reports/
+
+# Documentation
+docs/build/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
