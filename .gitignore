@@ -38,6 +38,7 @@ __pycache__/
 build/
 dist/
 .venv/
+venv/
 env/
 
 # Jupyter Notebook
@@ -46,6 +47,8 @@ env/
 # Data files (large or generated)
 data/*
 !data/.gitkeep
+!data/realms.json
+!data/recipes.json
 
 # Configuration files (local)
 .env

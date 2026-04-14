@@ -1,55 +1,53 @@
-# 数值模型 -  idle_cultivation_numerical_model
+# 境界数值模型（Streamlit）
 
-## 项目概述
+## 项目目标
 
-该项目是放置修仙放置游戏的数值模型，用于模拟和计算游戏中的各种数值参数，如升级所需经验、资源产出率、战斗平衡等。
+本项目用于评估“玩家从炼气一层修炼到最高层”的时间合理性，当前一期仅覆盖境界模型。
 
-## 主要功能
+核心特性：
+- 支持在页面动态调参并实时重算
+- 左侧三页布局：首页分析、境界配置、丹方配置
+- 首页可预览未保存草稿配置的效果
+- 炼气期手动编辑保留
+- 筑基1层起自动生成后续层级数值
+- 展示四类时间：层间灵气、层间材料、累计灵气、累计材料
+- 保存只写本项目 `data/realms.json`，不反向修改服务端
 
-- 经验系统：计算不同等级所需的经验值
-- 资源系统：模拟资源产出和消耗
-- 战斗系统：计算伤害、防御和胜率
-- 升级系统：计算属性成长和技能效果
-- 平衡调整：通过参数调整实现游戏平衡
+## 数据来源
+
+- `data/realms.json`：初始由服务端 `idle_cultivation_server/app/modules/cultivation/realms.json` 拷贝
+- `data/recipes.json`：初始由服务端 `idle_cultivation_server/app/modules/alchemy/recipes.json` 拷贝
+
+## 时间口径
+
+- 层间耗时：小时
+- 累计总耗时：天
+- 显示格式：保留两位小数并去尾零（如 `12`、`12.5`、`12.34`）
+
+## 开发运行
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+## 测试
+
+```bash
+python -m pytest tests
+```
 
 ## 目录结构
 
-```
+```text
 idle_cultivation_numerical_model/
-├── README.md          # 项目说明
-├── .gitignore         # Git忽略文件
-├── src/               # 源代码目录
-│   ├── experience/    # 经验系统
-│   ├── resource/      # 资源系统
-│   ├── combat/        # 战斗系统
-│   └── upgrade/       # 升级系统
-└── tests/             # 测试目录
+├── app.py
+├── data/
+│   ├── realms.json
+│   └── recipes.json
+├── src/
+│   ├── io/
+│   ├── model/
+│   └── ui/
+└── tests/
 ```
-
-## 技术栈
-
-- Python 3.10+
-- NumPy (数值计算)
-- Pandas (数据处理)
-- Matplotlib (数据可视化)
-- Pytest (单元测试)
-
-## 开发流程
-
-1. 定义数值模型参数
-2. 实现核心计算逻辑
-3. 运行测试验证结果
-4. 调整参数优化平衡
-5. 生成数据报告
-
-## 贡献指南
-
-1. 克隆仓库
-2. 创建分支
-3. 实现功能
-4. 运行测试
-5. 提交PR
-
-## 联系信息
-
-- 项目链接：[https://github.com/wcc11404/idle_cultivation_numerical_model](https://github.com/wcc11404/idle_cultivation_numerical_model)

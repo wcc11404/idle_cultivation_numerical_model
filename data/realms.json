@@ -1,0 +1,1040 @@
+{
+    "realm_order": [
+        "炼气期",
+        "筑基期",
+        "金丹期",
+        "元婴期",
+        "化神期",
+        "炼虚期",
+        "合体期",
+        "大乘期",
+        "渡劫期"
+    ],
+    "breakthrough_materials": {
+        "炼气期": {
+            "10": {
+                "foundation_pill": 1
+            }
+        },
+        "筑基期": {
+            "3": {
+                "foundation_pill": 1
+            },
+            "6": {
+                "foundation_pill": 1
+            },
+            "9": {
+                "foundation_pill": 2
+            },
+            "10": {
+                "golden_core_pill": 1
+            }
+        },
+        "金丹期": {
+            "3": {
+                "golden_core_pill": 1
+            },
+            "6": {
+                "golden_core_pill": 1
+            },
+            "9": {
+                "golden_core_pill": 2
+            },
+            "10": {
+                "nascent_soul_pill": 1
+            }
+        },
+        "元婴期": {
+            "3": {
+                "nascent_soul_pill": 1
+            },
+            "6": {
+                "nascent_soul_pill": 1
+            },
+            "9": {
+                "nascent_soul_pill": 2
+            },
+            "10": {
+                "spirit_separation_pill": 1
+            }
+        },
+        "化神期": {
+            "3": {
+                "spirit_separation_pill": 1
+            },
+            "6": {
+                "spirit_separation_pill": 1
+            },
+            "9": {
+                "spirit_separation_pill": 2
+            },
+            "10": {
+                "void_refining_pill": 1
+            }
+        },
+        "炼虚期": {
+            "3": {
+                "void_refining_pill": 1
+            },
+            "6": {
+                "void_refining_pill": 1
+            },
+            "9": {
+                "void_refining_pill": 2
+            },
+            "10": {
+                "body_integration_pill": 1
+            }
+        },
+        "合体期": {
+            "3": {
+                "body_integration_pill": 1
+            },
+            "6": {
+                "body_integration_pill": 1
+            },
+            "9": {
+                "body_integration_pill": 2
+            },
+            "10": {
+                "mahayana_pill": 1
+            }
+        },
+        "大乘期": {
+            "3": {
+                "mahayana_pill": 1
+            },
+            "6": {
+                "mahayana_pill": 1
+            },
+            "9": {
+                "mahayana_pill": 2
+            },
+            "10": {
+                "tribulation_pill": 1
+            }
+        },
+        "渡劫期": {
+            "3": {
+                "tribulation_pill": 1
+            },
+            "6": {
+                "tribulation_pill": 1
+            },
+            "9": {
+                "tribulation_pill": 2
+            }
+        }
+    },
+    "realms": {
+        "炼气期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 50,
+                    "attack": 5,
+                    "defense": 2,
+                    "spirit_stone_cost": 4,
+                    "spirit_energy_cost": 5,
+                    "max_spirit_energy": 5
+                },
+                "2": {
+                    "health": 55,
+                    "attack": 6,
+                    "defense": 2,
+                    "spirit_stone_cost": 6,
+                    "spirit_energy_cost": 10,
+                    "max_spirit_energy": 10
+                },
+                "3": {
+                    "health": 60,
+                    "attack": 7,
+                    "defense": 3,
+                    "spirit_stone_cost": 8,
+                    "spirit_energy_cost": 12,
+                    "max_spirit_energy": 12
+                },
+                "4": {
+                    "health": 68,
+                    "attack": 8,
+                    "defense": 3,
+                    "spirit_stone_cost": 10,
+                    "spirit_energy_cost": 13,
+                    "max_spirit_energy": 13
+                },
+                "5": {
+                    "health": 76,
+                    "attack": 9,
+                    "defense": 4,
+                    "spirit_stone_cost": 12,
+                    "spirit_energy_cost": 20,
+                    "max_spirit_energy": 20
+                },
+                "6": {
+                    "health": 86,
+                    "attack": 10,
+                    "defense": 5,
+                    "spirit_stone_cost": 15,
+                    "spirit_energy_cost": 28,
+                    "max_spirit_energy": 28
+                },
+                "7": {
+                    "health": 96,
+                    "attack": 12,
+                    "defense": 5,
+                    "spirit_stone_cost": 17,
+                    "spirit_energy_cost": 38,
+                    "max_spirit_energy": 38
+                },
+                "8": {
+                    "health": 110,
+                    "attack": 14,
+                    "defense": 6,
+                    "spirit_stone_cost": 19,
+                    "spirit_energy_cost": 50,
+                    "max_spirit_energy": 50
+                },
+                "9": {
+                    "health": 130,
+                    "attack": 16,
+                    "defense": 7,
+                    "spirit_stone_cost": 21,
+                    "spirit_energy_cost": 64,
+                    "max_spirit_energy": 64
+                },
+                "10": {
+                    "health": 150,
+                    "attack": 20,
+                    "defense": 9,
+                    "spirit_stone_cost": 24,
+                    "spirit_energy_cost": 80,
+                    "max_spirit_energy": 80
+                }
+            },
+            "next_realm": "筑基期",
+            "description": "引气入体，修炼入门",
+            "spirit_gain_speed": 1,
+            "speed": 5
+        },
+        "筑基期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 250,
+                    "attack": 30,
+                    "defense": 13,
+                    "spirit_stone_cost": 50,
+                    "spirit_energy_cost": 1000,
+                    "max_spirit_energy": 1200
+                },
+                "2": {
+                    "health": 275,
+                    "attack": 33,
+                    "defense": 14,
+                    "spirit_stone_cost": 55,
+                    "spirit_energy_cost": 1150,
+                    "max_spirit_energy": 1380
+                },
+                "3": {
+                    "health": 302,
+                    "attack": 36,
+                    "defense": 15,
+                    "spirit_stone_cost": 60,
+                    "spirit_energy_cost": 1322,
+                    "max_spirit_energy": 1586
+                },
+                "4": {
+                    "health": 332,
+                    "attack": 39,
+                    "defense": 17,
+                    "spirit_stone_cost": 66,
+                    "spirit_energy_cost": 1520,
+                    "max_spirit_energy": 1823
+                },
+                "5": {
+                    "health": 366,
+                    "attack": 43,
+                    "defense": 19,
+                    "spirit_stone_cost": 73,
+                    "spirit_energy_cost": 1747,
+                    "max_spirit_energy": 2096
+                },
+                "6": {
+                    "health": 402,
+                    "attack": 48,
+                    "defense": 20,
+                    "spirit_stone_cost": 80,
+                    "spirit_energy_cost": 2009,
+                    "max_spirit_energy": 2410
+                },
+                "7": {
+                    "health": 442,
+                    "attack": 53,
+                    "defense": 23,
+                    "spirit_stone_cost": 88,
+                    "spirit_energy_cost": 2310,
+                    "max_spirit_energy": 2771
+                },
+                "8": {
+                    "health": 487,
+                    "attack": 58,
+                    "defense": 25,
+                    "spirit_stone_cost": 97,
+                    "spirit_energy_cost": 2656,
+                    "max_spirit_energy": 3186
+                },
+                "9": {
+                    "health": 535,
+                    "attack": 64,
+                    "defense": 27,
+                    "spirit_stone_cost": 107,
+                    "spirit_energy_cost": 3054,
+                    "max_spirit_energy": 3663
+                },
+                "10": {
+                    "health": 589,
+                    "attack": 70,
+                    "defense": 30,
+                    "spirit_stone_cost": 117,
+                    "spirit_energy_cost": 3512,
+                    "max_spirit_energy": 4212
+                }
+            },
+            "next_realm": "金丹期",
+            "description": "凝聚道基，初步成仙",
+            "spirit_gain_speed": 1.2,
+            "speed": 5
+        },
+        "金丹期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 1250,
+                    "attack": 105,
+                    "defense": 45,
+                    "spirit_stone_cost": 250,
+                    "spirit_energy_cost": 6000,
+                    "max_spirit_energy": 7200
+                },
+                "2": {
+                    "health": 1375,
+                    "attack": 115,
+                    "defense": 49,
+                    "spirit_stone_cost": 275,
+                    "spirit_energy_cost": 6899,
+                    "max_spirit_energy": 8280
+                },
+                "3": {
+                    "health": 1512,
+                    "attack": 127,
+                    "defense": 54,
+                    "spirit_stone_cost": 302,
+                    "spirit_energy_cost": 7933,
+                    "max_spirit_energy": 9522
+                },
+                "4": {
+                    "health": 1663,
+                    "attack": 139,
+                    "defense": 59,
+                    "spirit_stone_cost": 332,
+                    "spirit_energy_cost": 9122,
+                    "max_spirit_energy": 10950
+                },
+                "5": {
+                    "health": 1830,
+                    "attack": 153,
+                    "defense": 65,
+                    "spirit_stone_cost": 366,
+                    "spirit_energy_cost": 10490,
+                    "max_spirit_energy": 12592
+                },
+                "6": {
+                    "health": 2013,
+                    "attack": 169,
+                    "defense": 72,
+                    "spirit_stone_cost": 402,
+                    "spirit_energy_cost": 12063,
+                    "max_spirit_energy": 14480
+                },
+                "7": {
+                    "health": 2214,
+                    "attack": 186,
+                    "defense": 79,
+                    "spirit_stone_cost": 442,
+                    "spirit_energy_cost": 13872,
+                    "max_spirit_energy": 16652
+                },
+                "8": {
+                    "health": 2435,
+                    "attack": 204,
+                    "defense": 87,
+                    "spirit_stone_cost": 487,
+                    "spirit_energy_cost": 15952,
+                    "max_spirit_energy": 19149
+                },
+                "9": {
+                    "health": 2679,
+                    "attack": 225,
+                    "defense": 96,
+                    "spirit_stone_cost": 535,
+                    "spirit_energy_cost": 18344,
+                    "max_spirit_energy": 22021
+                },
+                "10": {
+                    "health": 2947,
+                    "attack": 247,
+                    "defense": 106,
+                    "spirit_stone_cost": 589,
+                    "spirit_energy_cost": 21095,
+                    "max_spirit_energy": 25324
+                }
+            },
+            "next_realm": "元婴期",
+            "description": "凝结金丹，蜕凡成仙",
+            "spirit_gain_speed": 1.5,
+            "speed": 5
+        },
+        "元婴期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 6250,
+                    "attack": 370,
+                    "defense": 159,
+                    "spirit_stone_cost": 1250,
+                    "spirit_energy_cost": 36000,
+                    "max_spirit_energy": 43200
+                },
+                "2": {
+                    "health": 6875,
+                    "attack": 407,
+                    "defense": 174,
+                    "spirit_stone_cost": 1375,
+                    "spirit_energy_cost": 41400,
+                    "max_spirit_energy": 49679
+                },
+                "3": {
+                    "health": 7562,
+                    "attack": 447,
+                    "defense": 192,
+                    "spirit_stone_cost": 1512,
+                    "spirit_energy_cost": 47609,
+                    "max_spirit_energy": 57130
+                },
+                "4": {
+                    "health": 8318,
+                    "attack": 492,
+                    "defense": 211,
+                    "spirit_stone_cost": 1663,
+                    "spirit_energy_cost": 54750,
+                    "max_spirit_energy": 65699
+                },
+                "5": {
+                    "health": 9150,
+                    "attack": 541,
+                    "defense": 232,
+                    "spirit_stone_cost": 1830,
+                    "spirit_energy_cost": 62962,
+                    "max_spirit_energy": 75553
+                },
+                "6": {
+                    "health": 10065,
+                    "attack": 595,
+                    "defense": 256,
+                    "spirit_stone_cost": 2013,
+                    "spirit_energy_cost": 72406,
+                    "max_spirit_energy": 86885
+                },
+                "7": {
+                    "health": 11072,
+                    "attack": 655,
+                    "defense": 281,
+                    "spirit_stone_cost": 2214,
+                    "spirit_energy_cost": 83266,
+                    "max_spirit_energy": 99917
+                },
+                "8": {
+                    "health": 12179,
+                    "attack": 721,
+                    "defense": 309,
+                    "spirit_stone_cost": 2435,
+                    "spirit_energy_cost": 95755,
+                    "max_spirit_energy": 114904
+                },
+                "9": {
+                    "health": 13397,
+                    "attack": 793,
+                    "defense": 340,
+                    "spirit_stone_cost": 2679,
+                    "spirit_energy_cost": 110118,
+                    "max_spirit_energy": 132139
+                },
+                "10": {
+                    "health": 14737,
+                    "attack": 872,
+                    "defense": 374,
+                    "spirit_stone_cost": 2947,
+                    "spirit_energy_cost": 126635,
+                    "max_spirit_energy": 151959
+                }
+            },
+            "next_realm": "化神期",
+            "description": "元婴出窍，神通广大",
+            "spirit_gain_speed": 2,
+            "speed": 5
+        },
+        "化神期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 31250,
+                    "attack": 1308,
+                    "defense": 561,
+                    "spirit_stone_cost": 6250,
+                    "spirit_energy_cost": 216000,
+                    "max_spirit_energy": 259200
+                },
+                "2": {
+                    "health": 34375,
+                    "attack": 1438,
+                    "defense": 617,
+                    "spirit_stone_cost": 6875,
+                    "spirit_energy_cost": 248399,
+                    "max_spirit_energy": 298080
+                },
+                "3": {
+                    "health": 37812,
+                    "attack": 1582,
+                    "defense": 678,
+                    "spirit_stone_cost": 7562,
+                    "spirit_energy_cost": 285658,
+                    "max_spirit_energy": 342792
+                },
+                "4": {
+                    "health": 41593,
+                    "attack": 1740,
+                    "defense": 746,
+                    "spirit_stone_cost": 8318,
+                    "spirit_energy_cost": 328506,
+                    "max_spirit_energy": 394210
+                },
+                "5": {
+                    "health": 45753,
+                    "attack": 1915,
+                    "defense": 821,
+                    "spirit_stone_cost": 9150,
+                    "spirit_energy_cost": 377781,
+                    "max_spirit_energy": 453341
+                },
+                "6": {
+                    "health": 50328,
+                    "attack": 2106,
+                    "defense": 903,
+                    "spirit_stone_cost": 10065,
+                    "spirit_energy_cost": 434448,
+                    "max_spirit_energy": 521342
+                },
+                "7": {
+                    "health": 55361,
+                    "attack": 2317,
+                    "defense": 993,
+                    "spirit_stone_cost": 11072,
+                    "spirit_energy_cost": 499615,
+                    "max_spirit_energy": 599543
+                },
+                "8": {
+                    "health": 60897,
+                    "attack": 2548,
+                    "defense": 1093,
+                    "spirit_stone_cost": 12179,
+                    "spirit_energy_cost": 574557,
+                    "max_spirit_energy": 689474
+                },
+                "9": {
+                    "health": 66987,
+                    "attack": 2803,
+                    "defense": 1202,
+                    "spirit_stone_cost": 13397,
+                    "spirit_energy_cost": 660740,
+                    "max_spirit_energy": 792895
+                },
+                "10": {
+                    "health": 73685,
+                    "attack": 3084,
+                    "defense": 1322,
+                    "spirit_stone_cost": 14737,
+                    "spirit_energy_cost": 759850,
+                    "max_spirit_energy": 911829
+                }
+            },
+            "next_realm": "炼虚期",
+            "description": "返璞归真，化神为虚",
+            "spirit_gain_speed": 3,
+            "speed": 5
+        },
+        "炼虚期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 156250,
+                    "attack": 4626,
+                    "defense": 1983,
+                    "spirit_stone_cost": 31250,
+                    "spirit_energy_cost": 1296000,
+                    "max_spirit_energy": 1555200
+                },
+                "2": {
+                    "health": 171875,
+                    "attack": 5088,
+                    "defense": 2181,
+                    "spirit_stone_cost": 34375,
+                    "spirit_energy_cost": 1490400,
+                    "max_spirit_energy": 1788479
+                },
+                "3": {
+                    "health": 189062,
+                    "attack": 5597,
+                    "defense": 2399,
+                    "spirit_stone_cost": 37812,
+                    "spirit_energy_cost": 1713959,
+                    "max_spirit_energy": 2056750
+                },
+                "4": {
+                    "health": 207968,
+                    "attack": 6157,
+                    "defense": 2639,
+                    "spirit_stone_cost": 41593,
+                    "spirit_energy_cost": 1971052,
+                    "max_spirit_energy": 2365262
+                },
+                "5": {
+                    "health": 228765,
+                    "attack": 6772,
+                    "defense": 2903,
+                    "spirit_stone_cost": 45753,
+                    "spirit_energy_cost": 2266709,
+                    "max_spirit_energy": 2720051
+                },
+                "6": {
+                    "health": 251642,
+                    "attack": 7450,
+                    "defense": 3193,
+                    "spirit_stone_cost": 50328,
+                    "spirit_energy_cost": 2606715,
+                    "max_spirit_energy": 3128058
+                },
+                "7": {
+                    "health": 276806,
+                    "attack": 8195,
+                    "defense": 3513,
+                    "spirit_stone_cost": 55361,
+                    "spirit_energy_cost": 2997722,
+                    "max_spirit_energy": 3597266
+                },
+                "8": {
+                    "health": 304487,
+                    "attack": 9014,
+                    "defense": 3864,
+                    "spirit_stone_cost": 60897,
+                    "spirit_energy_cost": 3447380,
+                    "max_spirit_energy": 4136855
+                },
+                "9": {
+                    "health": 334935,
+                    "attack": 9916,
+                    "defense": 4250,
+                    "spirit_stone_cost": 66987,
+                    "spirit_energy_cost": 3964486,
+                    "max_spirit_energy": 4757383
+                },
+                "10": {
+                    "health": 368429,
+                    "attack": 10907,
+                    "defense": 4675,
+                    "spirit_stone_cost": 73685,
+                    "spirit_energy_cost": 4559158,
+                    "max_spirit_energy": 5470990
+                }
+            },
+            "next_realm": "合体期",
+            "description": "虚实合一，神通无量",
+            "spirit_gain_speed": 5,
+            "speed": 5
+        },
+        "合体期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 781250,
+                    "attack": 16360,
+                    "defense": 7012,
+                    "spirit_stone_cost": 156250,
+                    "spirit_energy_cost": 7776000,
+                    "max_spirit_energy": 9331200
+                },
+                "2": {
+                    "health": 859375,
+                    "attack": 17996,
+                    "defense": 7713,
+                    "spirit_stone_cost": 171875,
+                    "spirit_energy_cost": 8942400,
+                    "max_spirit_energy": 10730880
+                },
+                "3": {
+                    "health": 945312,
+                    "attack": 19795,
+                    "defense": 8484,
+                    "spirit_stone_cost": 189062,
+                    "spirit_energy_cost": 10283760,
+                    "max_spirit_energy": 12340511
+                },
+                "4": {
+                    "health": 1039843,
+                    "attack": 21775,
+                    "defense": 9332,
+                    "spirit_stone_cost": 207968,
+                    "spirit_energy_cost": 11826324,
+                    "max_spirit_energy": 14191587
+                },
+                "5": {
+                    "health": 1143828,
+                    "attack": 23952,
+                    "defense": 10266,
+                    "spirit_stone_cost": 228765,
+                    "spirit_energy_cost": 13600272,
+                    "max_spirit_energy": 16320325
+                },
+                "6": {
+                    "health": 1258210,
+                    "attack": 26347,
+                    "defense": 11292,
+                    "spirit_stone_cost": 251642,
+                    "spirit_energy_cost": 15640312,
+                    "max_spirit_energy": 18768373
+                },
+                "7": {
+                    "health": 1384032,
+                    "attack": 28982,
+                    "defense": 12422,
+                    "spirit_stone_cost": 276806,
+                    "spirit_energy_cost": 17986358,
+                    "max_spirit_energy": 21583628
+                },
+                "8": {
+                    "health": 1522435,
+                    "attack": 31881,
+                    "defense": 13664,
+                    "spirit_stone_cost": 304487,
+                    "spirit_energy_cost": 20684311,
+                    "max_spirit_energy": 24821172
+                },
+                "9": {
+                    "health": 1674678,
+                    "attack": 35069,
+                    "defense": 15030,
+                    "spirit_stone_cost": 334935,
+                    "spirit_energy_cost": 23786957,
+                    "max_spirit_energy": 28544347
+                },
+                "10": {
+                    "health": 1842146,
+                    "attack": 38576,
+                    "defense": 16533,
+                    "spirit_stone_cost": 368429,
+                    "spirit_energy_cost": 27355000,
+                    "max_spirit_energy": 32825999
+                }
+            },
+            "next_realm": "大乘期",
+            "description": "天地合一，接近仙人",
+            "spirit_gain_speed": 9,
+            "speed": 5
+        },
+        "大乘期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 3906250,
+                    "attack": 57864,
+                    "defense": 24799,
+                    "spirit_stone_cost": 781250,
+                    "spirit_energy_cost": 46656000,
+                    "max_spirit_energy": 55987200
+                },
+                "2": {
+                    "health": 4296875,
+                    "attack": 63650,
+                    "defense": 27278,
+                    "spirit_stone_cost": 859375,
+                    "spirit_energy_cost": 53654399,
+                    "max_spirit_energy": 64385279
+                },
+                "3": {
+                    "health": 4726562,
+                    "attack": 70015,
+                    "defense": 30006,
+                    "spirit_stone_cost": 945312,
+                    "spirit_energy_cost": 61702558,
+                    "max_spirit_energy": 74043070
+                },
+                "4": {
+                    "health": 5199218,
+                    "attack": 77016,
+                    "defense": 33007,
+                    "spirit_stone_cost": 1039843,
+                    "spirit_energy_cost": 70957941,
+                    "max_spirit_energy": 85149530
+                },
+                "5": {
+                    "health": 5719140,
+                    "attack": 84718,
+                    "defense": 36308,
+                    "spirit_stone_cost": 1143828,
+                    "spirit_energy_cost": 81601632,
+                    "max_spirit_energy": 97921959
+                },
+                "6": {
+                    "health": 6291054,
+                    "attack": 93190,
+                    "defense": 39939,
+                    "spirit_stone_cost": 1258210,
+                    "spirit_energy_cost": 93841876,
+                    "max_spirit_energy": 112610252
+                },
+                "7": {
+                    "health": 6920160,
+                    "attack": 102509,
+                    "defense": 43932,
+                    "spirit_stone_cost": 1384032,
+                    "spirit_energy_cost": 107918157,
+                    "max_spirit_energy": 129501789
+                },
+                "8": {
+                    "health": 7612176,
+                    "attack": 112760,
+                    "defense": 48326,
+                    "spirit_stone_cost": 1522435,
+                    "spirit_energy_cost": 124105880,
+                    "max_spirit_energy": 148927057
+                },
+                "9": {
+                    "health": 8373393,
+                    "attack": 124036,
+                    "defense": 53158,
+                    "spirit_stone_cost": 1674678,
+                    "spirit_energy_cost": 142721762,
+                    "max_spirit_energy": 171266115
+                },
+                "10": {
+                    "health": 9210733,
+                    "attack": 136440,
+                    "defense": 58474,
+                    "spirit_stone_cost": 1842146,
+                    "spirit_energy_cost": 164130026,
+                    "max_spirit_energy": 196956032
+                }
+            },
+            "next_realm": "渡劫期",
+            "description": "功德圆满，渡劫飞升",
+            "spirit_gain_speed": 18,
+            "speed": 5
+        },
+        "渡劫期": {
+            "max_level": 10,
+            "level_names": {
+                "1": "一层",
+                "2": "二层",
+                "3": "三层",
+                "4": "四层",
+                "5": "五层",
+                "6": "六层",
+                "7": "七层",
+                "8": "八层",
+                "9": "九层",
+                "10": "大圆满"
+            },
+            "levels": {
+                "1": {
+                    "health": 19531250,
+                    "attack": 204660,
+                    "defense": 87711,
+                    "spirit_stone_cost": 3906250,
+                    "spirit_energy_cost": 279936000,
+                    "max_spirit_energy": 335923200
+                },
+                "2": {
+                    "health": 21484375,
+                    "attack": 225126,
+                    "defense": 96482,
+                    "spirit_stone_cost": 4296875,
+                    "spirit_energy_cost": 321926400,
+                    "max_spirit_energy": 386311679
+                },
+                "3": {
+                    "health": 23632812,
+                    "attack": 247638,
+                    "defense": 106130,
+                    "spirit_stone_cost": 4726562,
+                    "spirit_energy_cost": 370215360,
+                    "max_spirit_energy": 444258430
+                },
+                "4": {
+                    "health": 25996093,
+                    "attack": 272402,
+                    "defense": 116743,
+                    "spirit_stone_cost": 5199218,
+                    "spirit_energy_cost": 425747663,
+                    "max_spirit_energy": 510897194
+                },
+                "5": {
+                    "health": 28595703,
+                    "attack": 299642,
+                    "defense": 128417,
+                    "spirit_stone_cost": 5719140,
+                    "spirit_energy_cost": 489609812,
+                    "max_spirit_energy": 587531773
+                },
+                "6": {
+                    "health": 31455273,
+                    "attack": 329606,
+                    "defense": 141259,
+                    "spirit_stone_cost": 6291054,
+                    "spirit_energy_cost": 563051283,
+                    "max_spirit_energy": 675661538
+                },
+                "7": {
+                    "health": 34600800,
+                    "attack": 362567,
+                    "defense": 155385,
+                    "spirit_stone_cost": 6920160,
+                    "spirit_energy_cost": 647508975,
+                    "max_spirit_energy": 777010768
+                },
+                "8": {
+                    "health": 38060880,
+                    "attack": 398824,
+                    "defense": 170923,
+                    "spirit_stone_cost": 7612176,
+                    "spirit_energy_cost": 744635321,
+                    "max_spirit_energy": 893562383
+                },
+                "9": {
+                    "health": 41866968,
+                    "attack": 438706,
+                    "defense": 188016,
+                    "spirit_stone_cost": 8373393,
+                    "spirit_energy_cost": 856330619,
+                    "max_spirit_energy": 1027596740
+                },
+                "10": {
+                    "health": 46053665,
+                    "attack": 482577,
+                    "defense": 206817,
+                    "spirit_stone_cost": 9210733,
+                    "spirit_energy_cost": 984780211,
+                    "max_spirit_energy": 1181736251
+                }
+            },
+            "next_realm": "",
+            "description": "历尽天劫，羽化登仙",
+            "spirit_gain_speed": 40,
+            "speed": 5
+        }
+    }
+}
