@@ -27,7 +27,7 @@
                 "health_base": 20,
                 "health_growth": 1.1,
                 "attack_base": 6,
-                "attack_growth": 1.11,
+                "attack_growth": 1.1,
                 "defense_base": 0,
                 "defense_growth": 1.0,
                 "speed_base": 4.9,
@@ -41,8 +41,8 @@
                 "獠牙猪"
             ],
             "growth": {
-                "health_base": 30,
-                "health_growth": 1.11,
+                "health_base": 35,
+                "health_growth": 1.1,
                 "attack_base": 4,
                 "attack_growth": 1.1,
                 "defense_base": 0,
@@ -55,8 +55,8 @@
             "name": "铁背狼王",
             "growth": {
                 "health_base": 50,
-                "health_growth": 1.11,
-                "attack_base": 7,
+                "health_growth": 1.1,
+                "attack_base": 6,
                 "attack_growth": 1.1,
                 "defense_base": 0,
                 "defense_growth": 1.0,

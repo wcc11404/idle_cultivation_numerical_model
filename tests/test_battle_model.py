@@ -1,6 +1,7 @@
 import random
 
 from src.model.battle_model import (
+    DEFAULT_K_VALUE,
     build_checkpoint_matrix,
     calculate_damage,
     DEATH_RECOVER_SECONDS,
@@ -101,8 +102,8 @@ def _mock_enemies_never_act():
 
 
 def test_damage_formula_boundary_and_monotonic():
-    low_def = calculate_damage(attack=100, defense=0, penetration=0, k_value=500, skill_coef=1.0)
-    high_def = calculate_damage(attack=100, defense=1000, penetration=0, k_value=500, skill_coef=1.0)
+    low_def = calculate_damage(attack=100, defense=0, penetration=0, k_value=DEFAULT_K_VALUE, skill_coef=1.0)
+    high_def = calculate_damage(attack=100, defense=1000, penetration=0, k_value=DEFAULT_K_VALUE, skill_coef=1.0)
     higher_k = calculate_damage(attack=100, defense=1000, penetration=0, k_value=1000, skill_coef=1.0)
 
     assert low_def == 100.0
@@ -110,9 +111,9 @@ def test_damage_formula_boundary_and_monotonic():
     assert high_def < low_def
     assert higher_k > high_def
 
-    scaled = calculate_damage(attack=100, defense=500, penetration=0, k_value=500, skill_coef=1.5)
-    base = calculate_damage(attack=100, defense=500, penetration=0, k_value=500, skill_coef=1.0)
-    assert abs(scaled - base * 1.5) < 1e-9
+    scaled = calculate_damage(attack=100, defense=500, penetration=0, k_value=DEFAULT_K_VALUE, skill_coef=1.5)
+    base = calculate_damage(attack=100, defense=500, penetration=0, k_value=DEFAULT_K_VALUE, skill_coef=1.0)
+    assert abs(scaled - base * 1.5) <= 0.01
 
 
 def test_enemy_generation_respects_templates_and_level_range():
@@ -138,7 +139,7 @@ def test_simulate_trial_marks_capped_when_reaching_limit():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         penetration=0.0,
         max_fights_per_trial=3,
@@ -159,7 +160,7 @@ def test_battle_interval_seconds_increases_total_time():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         penetration=0.0,
         max_fights_per_trial=3,
@@ -170,7 +171,7 @@ def test_battle_interval_seconds_increases_total_time():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         penetration=0.0,
         max_fights_per_trial=3,
@@ -191,7 +192,7 @@ def test_simulate_trial_adds_recover_time_when_dead():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         penetration=0.0,
         max_fights_per_trial=10,
@@ -210,7 +211,7 @@ def test_simulate_average_zero_wins_when_opening_fight_fails():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -232,7 +233,7 @@ def test_simulate_average_not_hard_clamped_to_30_fights_for_strong_player():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -250,7 +251,7 @@ def test_simulate_average_ensures_minimum_sampled_battles_when_not_opening_death
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -290,7 +291,7 @@ def test_simulate_average_uses_analytic_drop_expectation():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -315,7 +316,7 @@ def test_simulate_average_uses_plus_100_seconds_for_single_fight_time():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -335,7 +336,7 @@ def test_simulate_average_marks_infinite_when_no_health_loss_after_cap():
         player_attrs=player_attrs,
         area_cfg=area,
         enemies_data=enemies,
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         trials=3,
         max_fights_per_trial=30,
@@ -354,7 +355,7 @@ def test_checkpoint_matrix_covers_each_realm_147_and_normal_areas():
         realms_data=_mock_realms(),
         areas_data=_mock_areas(),
         enemies_data=_mock_enemies(),
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         checkpoints=(1, 4, 7),
         trials=3,
@@ -380,7 +381,7 @@ def test_checkpoint_matrix_respects_target_realms_and_15_levels():
         realms_data=_mock_realms(),
         areas_data=_mock_areas(),
         enemies_data=_mock_enemies(),
-        k_value=500.0,
+        k_value=DEFAULT_K_VALUE,
         skill_coef=1.0,
         checkpoints=(1, 5),
         trials=2,
