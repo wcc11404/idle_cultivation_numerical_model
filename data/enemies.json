@@ -1,0 +1,81 @@
+{
+    "templates": {
+        "wolf": {
+            "name": "野狼",
+            "name_variants": [
+                "野狼",
+                "森林狼"
+            ],
+            "growth": {
+                "health_base": 25,
+                "health_growth": 1.1,
+                "attack_base": 5,
+                "attack_growth": 1.1,
+                "defense_base": 0,
+                "defense_growth": 1.0,
+                "speed_base": 4.5,
+                "speed_growth": 0.0001
+            }
+        },
+        "snake": {
+            "name": "毒蛇",
+            "name_variants": [
+                "五步蛇",
+                "竹叶青"
+            ],
+            "growth": {
+                "health_base": 20,
+                "health_growth": 1.1,
+                "attack_base": 6,
+                "attack_growth": 1.11,
+                "defense_base": 0,
+                "defense_growth": 1.0,
+                "speed_base": 4.9,
+                "speed_growth": 0.0002
+            }
+        },
+        "boar": {
+            "name": "野猪",
+            "name_variants": [
+                "野猪",
+                "獠牙猪"
+            ],
+            "growth": {
+                "health_base": 30,
+                "health_growth": 1.11,
+                "attack_base": 4,
+                "attack_growth": 1.1,
+                "defense_base": 0,
+                "defense_growth": 1.0,
+                "speed_base": 4.5,
+                "speed_growth": 0.0001
+            }
+        },
+        "iron_back_wolf": {
+            "name": "铁背狼王",
+            "growth": {
+                "health_base": 50,
+                "health_growth": 1.11,
+                "attack_base": 7,
+                "attack_growth": 1.1,
+                "defense_base": 0,
+                "defense_growth": 1.0,
+                "speed_base": 5.5,
+                "speed_growth": 0.0002
+            }
+        },
+        "herb_guardian": {
+            "name": "破境草看守者",
+            "growth": {
+                "health_base": 50,
+                "health_growth": 1.11,
+                "attack_base": 8,
+                "attack_growth": 1.1,
+                "defense_base": 5,
+                "defense_growth": 1.1,
+                "speed_base": 4.5,
+                "speed_growth": 0.0
+            }
+        }
+    }
+}

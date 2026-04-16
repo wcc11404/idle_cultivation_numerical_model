@@ -6,17 +6,24 @@
 
 核心特性：
 - 支持在页面动态调参并实时重算
-- 左侧三页布局：首页分析、境界配置、丹方配置
+- 左侧四页布局：首页分析、境界配置、丹方配置、战斗建模
 - 首页可预览未保存草稿配置的效果
 - 炼气期手动编辑保留
 - 筑基1层起自动生成后续层级数值
 - 展示四类时间：层间灵气、层间材料、累计灵气、累计材料
 - 保存只写本项目 `data/realms.json`，不反向修改服务端
+- 战斗建模页支持普通历练区域收益分析（固定提速策略：每次死亡前最多30场、最多3次仿真、剩余血量比例外推）
 
 ## 数据来源
 
 - `data/realms.json`：初始由服务端 `idle_cultivation_server/app/modules/cultivation/realms.json` 拷贝
 - `data/recipes.json`：初始由服务端 `idle_cultivation_server/app/modules/alchemy/recipes.json` 拷贝
+- `data/areas.json`：初始由服务端 `idle_cultivation_server/app/modules/lianli/areas.json` 拷贝
+- `data/enemies.json`：初始由服务端 `idle_cultivation_server/app/modules/lianli/enemies.json` 拷贝
+
+## 建模说明
+
+- 建模范围与可调配置总表见：`docs/modeling_scope.md`
 
 ## 时间口径
 

@@ -23,6 +23,7 @@ def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
                 continue
 
             level_data = realm["levels"][str(level)]
+            spirit_stone_cost = int(level_data.get("spirit_stone_cost", 0))
             spirit_cost = float(level_data["spirit_energy_cost"])
             step_spirit_hours = spirit_cost / spirit_gain_speed / 3600.0 if spirit_gain_speed > 0 else 0.0
 
@@ -42,6 +43,7 @@ def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
                     "from_stage": f"{realm_name}{_level_name(realm, level)}",
                     "to_stage": next_target,
                     "spirit_gain_speed": spirit_gain_speed,
+                    "spirit_stone_cost": spirit_stone_cost,
                     "spirit_energy_cost": int(spirit_cost),
                     "foundation_herb_needed": herb_needed,
                     "step_spirit_hours": step_spirit_hours,

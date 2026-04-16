@@ -49,6 +49,9 @@ data/*
 !data/.gitkeep
 !data/realms.json
 !data/recipes.json
+!data/areas.json
+!data/enemies.json
+!data/items.json
 
 # Configuration files (local)
 .env

@@ -1,0 +1,391 @@
+{
+	"items": {
+		"spirit_stone": {
+			"id": "spirit_stone",
+			"name": "灵石",
+			"type": 0,
+			"quality": 0,
+			"max_stack": 999999999,
+			"description": "修仙界的通用货币",
+			"icon": "res://assets/items/spirit_stone.png"
+		},
+		"mat_iron": {
+			"id": "mat_iron",
+			"name": "玄铁",
+			"type": 1,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "用于装备强化的基础材料",
+			"icon": "res://assets/items/mat_iron.png"
+		},
+		"mat_herb": {
+			"id": "mat_herb",
+			"name": "灵草",
+			"type": 1,
+			"quality": 0,
+			"max_stack": 9999,
+			"description": "用于炼丹的基础草药，具有广泛药用用途",
+			"icon": "res://assets/items/mat_herb.png"
+		},
+		"foundation_herb": {
+			"id": "foundation_herb",
+			"name": "破境草",
+			"type": 1,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "制作破境丹药所必须的草药，蕴含突破境界的神秘力量",
+			"icon": "res://assets/items/mat_herb.png"
+		},
+		"bug_pill": {
+			"id": "bug_pill",
+			"name": "bug丹",
+			"type": 2,
+			"quality": 4,
+			"max_stack": 99,
+			"description": "神奇的丹药，可补充1亿点灵气和10000点气血值",
+			"icon": "res://assets/items/bug_pill.png",
+			"effect": {
+				"type": "add_spirit_and_health",
+				"spirit_amount": 100000000,
+				"health_amount": 10000,
+				"unlimited": true
+			}
+		},
+		"health_pill": {
+			"id": "health_pill",
+			"name": "补血丹",
+			"type": 2,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "普通丹药，可回复50点气血值",
+			"icon": "res://assets/items/health_pill.png",
+			"effect": {
+				"type": "add_health",
+				"amount": 50
+			}
+		},
+		"spirit_pill": {
+			"id": "spirit_pill",
+			"name": "补气丹",
+			"type": 2,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "普通丹药，可补充20点灵气",
+			"icon": "res://assets/items/spirit_pill.png",
+			"effect": {
+				"type": "add_spirit_energy",
+				"amount": 20
+			}
+		},
+		"spell_basic_breathing": {
+			"id": "spell_basic_breathing",
+			"name": "基础吐纳",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁基础吐纳术法",
+			"icon": "res://assets/items/spell_basic_breathing.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "basic_breathing"
+			}
+		},
+		"spell_basic_boxing_techniques": {
+			"id": "spell_basic_boxing_techniques",
+			"name": "基础拳法",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁基础拳法术法",
+			"icon": "res://assets/items/spell_fire_ball.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "basic_boxing_techniques"
+			}
+		},
+		"spell_thunder_strike": {
+			"id": "spell_thunder_strike",
+			"name": "雷击术",
+			"type": 4,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "使用后可解锁雷击术",
+			"icon": "res://assets/items/spell_thunder_strike.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "thunder_strike"
+			}
+		},
+		"spell_basic_defense": {
+			"id": "spell_basic_defense",
+			"name": "基础防御",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁基础防御术法",
+			"icon": "res://assets/items/spell_basic_defense.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "basic_defense"
+			}
+		},
+		"spell_basic_steps": {
+			"id": "spell_basic_steps",
+			"name": "基础步法",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁基础步法术法",
+			"icon": "res://assets/items/spell_basic_steps.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "basic_steps"
+			}
+		},
+		"spell_basic_health": {
+			"id": "spell_basic_health",
+			"name": "基础气血",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁基础气血术法",
+			"icon": "res://assets/items/spell_basic_health.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "basic_health"
+			}
+		},
+		"spell_alchemy": {
+			"id": "spell_alchemy",
+			"name": "炼丹术",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁炼丹术",
+			"icon": "res://assets/items/spell_alchemy.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "alchemy"
+			}
+		},
+		"foundation_pill": {
+			"id": "foundation_pill",
+			"name": "筑基丹",
+			"type": 1,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "用于炼气期突破到筑基期的珍贵丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"golden_core_pill": {
+			"id": "golden_core_pill",
+			"name": "金丹丹",
+			"type": 1,
+			"quality": 2,
+			"max_stack": 99,
+			"description": "用于筑基期突破到金丹期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"nascent_soul_pill": {
+			"id": "nascent_soul_pill",
+			"name": "元婴丹",
+			"type": 1,
+			"quality": 2,
+			"max_stack": 99,
+			"description": "用于金丹期突破到元婴期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"spirit_separation_pill": {
+			"id": "spirit_separation_pill",
+			"name": "化神丹",
+			"type": 1,
+			"quality": 3,
+			"max_stack": 99,
+			"description": "用于元婴期突破到化神期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"void_refining_pill": {
+			"id": "void_refining_pill",
+			"name": "炼虚丹",
+			"type": 1,
+			"quality": 3,
+			"max_stack": 99,
+			"description": "用于化神期突破到炼虚期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"body_integration_pill": {
+			"id": "body_integration_pill",
+			"name": "合体丹",
+			"type": 1,
+			"quality": 4,
+			"max_stack": 99,
+			"description": "用于炼虚期突破到合体期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"mahayana_pill": {
+			"id": "mahayana_pill",
+			"name": "大乘丹",
+			"type": 1,
+			"quality": 4,
+			"max_stack": 99,
+			"description": "用于合体期突破到大乘期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"tribulation_pill": {
+			"id": "tribulation_pill",
+			"name": "渡劫丹",
+			"type": 1,
+			"quality": 4,
+			"max_stack": 99,
+			"description": "用于大乘期突破到渡劫期的必备丹药",
+			"icon": "res://assets/items/foundation_pill.png"
+		},
+		"recipe_health_pill": {
+			"id": "recipe_health_pill",
+			"name": "补血丹丹方",
+			"type": 5,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "记载补血丹炼制方法的丹方，使用后学会炼制补血丹",
+			"icon": "res://assets/items/health_pill.png",
+			"effect": {
+				"type": "learn_recipe",
+				"recipe_id": "health_pill"
+			}
+		},
+		"recipe_spirit_pill": {
+			"id": "recipe_spirit_pill",
+			"name": "补气丹丹方",
+			"type": 5,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "记载补气丹炼制方法的丹方，使用后学会炼制补气丹",
+			"icon": "res://assets/items/spirit_pill.png",
+			"effect": {
+				"type": "learn_recipe",
+				"recipe_id": "spirit_pill"
+			}
+		},
+		"recipe_foundation_pill": {
+			"id": "recipe_foundation_pill",
+			"name": "筑基丹丹方",
+			"type": 5,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "记载筑基丹炼制方法的珍贵丹方，使用后学会炼制筑基丹",
+			"icon": "res://assets/items/foundation_pill.png",
+			"effect": {
+				"type": "learn_recipe",
+				"recipe_id": "foundation_pill"
+			}
+		},
+		"recipe_golden_core_pill": {
+			"id": "recipe_golden_core_pill",
+			"name": "金丹丹丹方",
+			"type": 5,
+			"quality": 2,
+			"max_stack": 99,
+			"description": "记载金丹丹炼制方法的稀有丹方，使用后学会炼制金丹丹",
+			"icon": "res://assets/items/foundation_pill.png",
+			"effect": {
+				"type": "learn_recipe",
+				"recipe_id": "golden_core_pill"
+			}
+		},
+		"alchemy_furnace": {
+			"id": "alchemy_furnace",
+			"name": "初级丹炉",
+			"type": 6,
+			"quality": 1,
+			"max_stack": 1,
+			"description": "炼丹的基础工具，拥有丹炉后可进行炼丹",
+			"icon": "res://assets/items/mat_crystal.png",
+			"effect": {
+				"type": "unlock_feature",
+				"feature_id": "alchemy"
+			}
+		},
+		"starter_pack": {
+			"id": "starter_pack",
+			"name": "新手礼包Ⅰ",
+			"type": 3,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "打开后可获得30灵石、2个补血丹、1个新手礼包Ⅱ",
+			"icon": "res://assets/items/starter_pack.png",
+			"content": {
+				"spirit_stone": 30,
+				"health_pill": 2,
+				"starter_pack_2": 1
+			}
+		},
+		"starter_pack_2": {
+			"id": "starter_pack_2",
+			"name": "新手礼包Ⅱ",
+			"type": 3,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "需要炼气五层才能打开。打开后可获得基础拳法、1个新手礼包Ⅲ",
+			"icon": "res://assets/items/starter_pack.png",
+			"content": {
+				"spell_basic_boxing_techniques": 1,
+				"starter_pack_3": 1
+			},
+			"requirement": {
+				"realm_min": 5
+			}
+		},
+		"starter_pack_3": {
+			"id": "starter_pack_3",
+			"name": "新手礼包Ⅲ",
+			"type": 3,
+			"quality": 1,
+			"max_stack": 99,
+			"description": "需要炼气大圆满才能打开。打开后可获得筑基丹",
+			"icon": "res://assets/items/starter_pack.png",
+			"content": {
+				"foundation_pill": 1
+			},
+			"requirement": {
+				"realm_min": 10
+			}
+		},
+		"test_pack": {
+			"id": "test_pack",
+			"name": "测试礼包",
+			"type": 3,
+			"quality": 4,
+			"max_stack": 99,
+			"description": "打开后可获得1亿灵石、bug丹、补血丹、补气丹、所有术法解锁道具、所有突破丹药各10个、初级丹炉、所有丹方",
+			"icon": "res://assets/items/starter_pack.png",
+			"content": {
+				"spirit_stone": 100000000,
+				"bug_pill": 5,
+				"health_pill": 5,
+				"spirit_pill": 5,
+				"foundation_pill": 10,
+				"golden_core_pill": 10,
+				"nascent_soul_pill": 10,
+				"spirit_separation_pill": 10,
+				"void_refining_pill": 10,
+				"body_integration_pill": 10,
+				"mahayana_pill": 10,
+				"tribulation_pill": 10,
+				"spell_basic_breathing": 1,
+				"spell_basic_boxing_techniques": 1,
+				"spell_thunder_strike": 1,
+				"spell_basic_defense": 1,
+				"spell_basic_steps": 1,
+				"spell_basic_health": 1,
+				"spell_alchemy": 1,
+				"alchemy_furnace": 1,
+				"recipe_health_pill": 1,
+				"recipe_spirit_pill": 1,
+				"recipe_foundation_pill": 1,
+				"recipe_golden_core_pill": 1,
+				"mat_herb": 9999,
+				"foundation_herb": 99
+			}
+		}
+	}
+}

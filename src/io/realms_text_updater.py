@@ -54,18 +54,37 @@ def _update_realms_section_text(text: str, realm_order: list[str], old_realms: D
 def _replace_level_numbers(block_text: str, old_levels: Dict, new_levels: Dict) -> str:
     result = block_text
     for level in sorted(old_levels.keys(), key=int):
+        old_health = int(old_levels[level].get("health", 0))
+        old_attack = int(old_levels[level].get("attack", 0))
+        old_defense = int(old_levels[level].get("defense", 0))
+        old_stone = int(old_levels[level].get("spirit_stone_cost", 0))
         old_cost = int(old_levels[level]["spirit_energy_cost"])
         old_max = int(old_levels[level]["max_spirit_energy"])
+        new_health = int(new_levels[level].get("health", 0))
+        new_attack = int(new_levels[level].get("attack", 0))
+        new_defense = int(new_levels[level].get("defense", 0))
+        new_stone = int(new_levels[level].get("spirit_stone_cost", 0))
         new_cost = int(new_levels[level]["spirit_energy_cost"])
         new_max = int(new_levels[level]["max_spirit_energy"])
 
         pattern = re.compile(
-            rf'("{re.escape(level)}"\s*:\s*\{{[^{{}}]*?"spirit_energy_cost"\s*:\s*){old_cost}'
+            rf'("{re.escape(level)}"\s*:\s*\{{[^{{}}]*?"health"\s*:\s*){old_health}'
+            rf'([^{{}}]*?"attack"\s*:\s*){old_attack}'
+            rf'([^{{}}]*?"defense"\s*:\s*){old_defense}'
+            rf'([^{{}}]*?"spirit_stone_cost"\s*:\s*){old_stone}'
+            rf'([^{{}}]*?"spirit_energy_cost"\s*:\s*){old_cost}'
             rf'([^{{}}]*?"max_spirit_energy"\s*:\s*){old_max}'
         )
 
         def _repl(m: re.Match) -> str:
-            return f"{m.group(1)}{new_cost}{m.group(2)}{new_max}"
+            return (
+                f"{m.group(1)}{new_health}"
+                f"{m.group(2)}{new_attack}"
+                f"{m.group(3)}{new_defense}"
+                f"{m.group(4)}{new_stone}"
+                f"{m.group(5)}{new_cost}"
+                f"{m.group(6)}{new_max}"
+            )
 
         result, count = pattern.subn(_repl, result, count=1)
         if count != 1:
