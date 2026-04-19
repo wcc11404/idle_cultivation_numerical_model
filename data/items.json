@@ -66,7 +66,7 @@
 		},
 		"spirit_pill": {
 			"id": "spirit_pill",
-			"name": "补气丹",
+			"name": "聚气丹",
 			"type": 2,
 			"quality": 1,
 			"max_stack": 99,
@@ -255,11 +255,11 @@
 		},
 		"recipe_spirit_pill": {
 			"id": "recipe_spirit_pill",
-			"name": "补气丹丹方",
+			"name": "聚气丹丹方",
 			"type": 5,
 			"quality": 1,
 			"max_stack": 99,
-			"description": "记载补气丹炼制方法的丹方，使用后学会炼制补气丹",
+			"description": "记载聚气丹炼制方法的丹方，使用后学会炼制聚气丹",
 			"icon": "res://assets/items/spirit_pill.png",
 			"effect": {
 				"type": "learn_recipe",
@@ -356,7 +356,7 @@
 			"type": 3,
 			"quality": 4,
 			"max_stack": 99,
-			"description": "打开后可获得1亿灵石、bug丹、补血丹、补气丹、所有术法解锁道具、所有突破丹药各10个、初级丹炉、所有丹方",
+			"description": "打开后可获得1亿灵石、bug丹、补血丹、聚气丹、所有术法解锁道具、所有突破丹药各10个、初级丹炉、所有丹方",
 			"icon": "res://assets/items/starter_pack.png",
 			"content": {
 				"spirit_stone": 100000000,

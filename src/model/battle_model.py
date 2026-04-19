@@ -510,3 +510,121 @@ def build_checkpoint_matrix(
                         }
                     )
     return {"summary_rows": summary_rows, "reward_rows": reward_rows}
+
+
+def simulate_tower_floor_any_template_pass(
+    player_attrs: Dict[str, float],
+    areas_data: Dict[str, Any],
+    enemies_data: Dict[str, Any],
+    *,
+    floor: int,
+    k_value: float,
+    skill_coef: float,
+    penetration: float = 0.0,
+    battle_interval_seconds: float = DEFAULT_BATTLE_INTERVAL_SECONDS,
+    seed: Optional[int] = None,
+) -> Dict[str, Any]:
+    tower_cfg = areas_data.get("tower", {})
+    templates = tower_cfg.get("config", {}).get("templates", [])
+    tested_template_ids = [str(t) for t in templates if str(t)]
+    if floor <= 0 or not tested_template_ids:
+        return {
+            "floor": int(max(0, floor)),
+            "can_pass": False,
+            "tested_template_ids": tested_template_ids,
+            "passed_template_ids": [],
+        }
+
+    passed_template_ids: list[str] = []
+    for idx, template_id in enumerate(tested_template_ids):
+        area_cfg = {
+            "enemies_template": [
+                {
+                    "weight": 1,
+                    "enemies": [
+                        {
+                            "template": template_id,
+                            "min_level": int(floor),
+                            "max_level": int(floor),
+                        }
+                    ],
+                    "drops": {},
+                }
+            ]
+        }
+        trial_seed = None if seed is None else int(seed) + int(floor) * 1000 + idx
+        result = simulate_trial(
+            player_attrs=player_attrs,
+            area_cfg=area_cfg,
+            enemies_data=enemies_data,
+            k_value=k_value,
+            skill_coef=skill_coef,
+            penetration=penetration,
+            max_fights_per_trial=1,
+            battle_interval_seconds=battle_interval_seconds,
+            seed=trial_seed,
+        )
+        if int(result.get("victory_count", 0)) >= 1:
+            passed_template_ids.append(template_id)
+
+    return {
+        "floor": int(floor),
+        "can_pass": len(passed_template_ids) > 0,
+        "tested_template_ids": tested_template_ids,
+        "passed_template_ids": passed_template_ids,
+    }
+
+
+def build_tower_max_floor_by_stage(
+    realms_data: Dict[str, Any],
+    areas_data: Dict[str, Any],
+    enemies_data: Dict[str, Any],
+    *,
+    k_value: float,
+    skill_coef: float,
+    penetration: float = 0.0,
+    battle_interval_seconds: float = DEFAULT_BATTLE_INTERVAL_SECONDS,
+    seed: Optional[int] = None,
+    target_realms: tuple[str, ...] = ("筑基期", "金丹期"),
+) -> list[Dict[str, Any]]:
+    tower_max_floor = int(max(0, areas_data.get("tower", {}).get("max_floor", 0)))
+    if tower_max_floor <= 0:
+        return []
+
+    rows: list[Dict[str, Any]] = []
+    allowed_realms = set(target_realms)
+    for realm_name in realms_data.get("realm_order", []):
+        if realm_name not in allowed_realms:
+            continue
+        realm_cfg = realms_data.get("realms", {}).get(realm_name, {})
+        max_level = int(realm_cfg.get("max_level", 0))
+        for level in range(1, max_level + 1):
+            player_attrs = build_player_attrs_from_realm(realms_data, realm_name, level)
+            max_pass_floor = 0
+            for floor in range(1, tower_max_floor + 1):
+                floor_seed = None if seed is None else int(seed) + sum(ord(ch) for ch in f"{realm_name}:{level}:{floor}")
+                floor_result = simulate_tower_floor_any_template_pass(
+                    player_attrs=player_attrs,
+                    areas_data=areas_data,
+                    enemies_data=enemies_data,
+                    floor=floor,
+                    k_value=k_value,
+                    skill_coef=skill_coef,
+                    penetration=penetration,
+                    battle_interval_seconds=battle_interval_seconds,
+                    seed=floor_seed,
+                )
+                if bool(floor_result.get("can_pass", False)):
+                    max_pass_floor = floor
+                else:
+                    break
+
+            rows.append(
+                {
+                    "realm_name": str(realm_name),
+                    "level": int(level),
+                    "max_pass_floor": int(max_pass_floor),
+                    "tower_max_floor": int(tower_max_floor),
+                }
+            )
+    return rows

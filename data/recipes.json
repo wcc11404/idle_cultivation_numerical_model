@@ -1,132 +1,132 @@
 {
-	"recipes": {
-		"health_pill": {
-			"id": "health_pill",
-			"name": "补血丹",
-			"success_value": 50,
-			"base_time": 3.0,
-			"materials": {
-				"mat_herb": 2
-			},
-			"spirit_energy": 1,
-			"product": "health_pill",
-			"product_count": 1
-		},
-		"spirit_pill": {
-			"id": "spirit_pill",
-			"name": "补气丹",
-			"success_value": 40,
-			"base_time": 10.0,
-			"materials": {
-				"mat_herb": 10
-			},
-			"spirit_energy": 1,
-			"product": "spirit_pill",
-			"product_count": 1
-		},
-		"foundation_pill": {
-			"id": "foundation_pill",
-			"name": "筑基丹",
-			"success_value": 30,
-			"base_time": 30.0,
-			"materials": {
-				"foundation_herb": 3,
-				"mat_herb": 10
-			},
-			"spirit_energy": 5,
-			"product": "foundation_pill",
-			"product_count": 1
-		},
-		"golden_core_pill": {
-			"id": "golden_core_pill",
-			"name": "金丹丹",
-			"success_value": 20,
-			"base_time": 40.0,
-			"materials": {
-				"foundation_herb": 1,
-				"foundation_pill": 3
-			},
-			"spirit_energy": 10,
-			"product": "golden_core_pill",
-			"product_count": 1
-		},
-		"nascent_soul_pill": {
-			"id": "nascent_soul_pill",
-			"name": "元婴丹",
-			"success_value": 18,
-			"base_time": 50.0,
-			"materials": {
-				"foundation_herb": 1,
-				"golden_core_pill": 3
-			},
-			"spirit_energy": 20,
-			"product": "nascent_soul_pill",
-			"product_count": 1
-		},
-		"spirit_separation_pill": {
-			"id": "spirit_separation_pill",
-			"name": "化神丹",
-			"success_value": 16,
-			"base_time": 60.0,
-			"materials": {
-				"foundation_herb": 1,
-				"nascent_soul_pill": 3
-			},
-			"spirit_energy": 30,
-			"product": "spirit_separation_pill",
-			"product_count": 1
-		},
-		"void_refining_pill": {
-			"id": "void_refining_pill",
-			"name": "炼虚丹",
-			"success_value": 14,
-			"base_time": 70.0,
-			"materials": {
-				"foundation_herb": 1,
-				"spirit_separation_pill": 3
-			},
-			"spirit_energy": 40,
-			"product": "void_refining_pill",
-			"product_count": 1
-		},
-		"body_integration_pill": {
-			"id": "body_integration_pill",
-			"name": "合体丹",
-			"success_value": 12,
-			"base_time": 80.0,
-			"materials": {
-				"foundation_herb": 1,
-				"void_refining_pill": 3
-			},
-			"spirit_energy": 50,
-			"product": "body_integration_pill",
-			"product_count": 1
-		},
-		"mahayana_pill": {
-			"id": "mahayana_pill",
-			"name": "大乘丹",
-			"success_value": 10,
-			"base_time": 90.0,
-			"materials": {
-				"foundation_herb": 1,
-				"body_integration_pill": 3
-			},
-			"spirit_energy": 60,
-			"product": "mahayana_pill",
-			"product_count": 1
-		},
-		"tribulation_pill": {
-			"id": "tribulation_pill",
-			"name": "渡劫丹",
-			"success_value": 8,
-			"base_time": 100.0,
-			"materials": {
-				"foundation_herb": 1,
-				"mahayana_pill": 3
-			},
-			"spirit_energy": 70,
-			"product": "tribulation_pill",
-			"product_count": 1
-		}
-	}
+    "recipes": {
+        "health_pill": {
+            "id": "health_pill",
+            "name": "补血丹",
+            "success_value": 50,
+            "base_time": 3.0,
+            "materials": {
+                "mat_herb": 2
+            },
+            "spirit_energy": 1,
+            "product": "health_pill",
+            "product_count": 1
+        },
+        "spirit_pill": {
+            "id": "spirit_pill",
+            "name": "聚气丹",
+            "success_value": 40,
+            "base_time": 10.0,
+            "materials": {
+                "mat_herb": 10
+            },
+            "spirit_energy": 1,
+            "product": "spirit_pill",
+            "product_count": 1
+        },
+        "foundation_pill": {
+            "id": "foundation_pill",
+            "name": "筑基丹",
+            "success_value": 30,
+            "base_time": 30.0,
+            "materials": {
+                "foundation_herb": 3,
+                "mat_herb": 10
+            },
+            "spirit_energy": 5,
+            "product": "foundation_pill",
+            "product_count": 1
+        },
+        "golden_core_pill": {
+            "id": "golden_core_pill",
+            "name": "金丹丹",
+            "success_value": 20,
+            "base_time": 40.0,
+            "materials": {
+                "foundation_herb": 1,
+                "foundation_pill": 3
+            },
+            "spirit_energy": 10,
+            "product": "golden_core_pill",
+            "product_count": 1
+        },
+        "nascent_soul_pill": {
+            "id": "nascent_soul_pill",
+            "name": "元婴丹",
+            "success_value": 18,
+            "base_time": 50.0,
+            "materials": {
+                "foundation_herb": 1,
+                "golden_core_pill": 3
+            },
+            "spirit_energy": 20,
+            "product": "nascent_soul_pill",
+            "product_count": 1
+        },
+        "spirit_separation_pill": {
+            "id": "spirit_separation_pill",
+            "name": "化神丹",
+            "success_value": 16,
+            "base_time": 60.0,
+            "materials": {
+                "foundation_herb": 1,
+                "nascent_soul_pill": 3
+            },
+            "spirit_energy": 30,
+            "product": "spirit_separation_pill",
+            "product_count": 1
+        },
+        "void_refining_pill": {
+            "id": "void_refining_pill",
+            "name": "炼虚丹",
+            "success_value": 14,
+            "base_time": 70.0,
+            "materials": {
+                "foundation_herb": 1,
+                "spirit_separation_pill": 3
+            },
+            "spirit_energy": 40,
+            "product": "void_refining_pill",
+            "product_count": 1
+        },
+        "body_integration_pill": {
+            "id": "body_integration_pill",
+            "name": "合体丹",
+            "success_value": 12,
+            "base_time": 80.0,
+            "materials": {
+                "foundation_herb": 1,
+                "void_refining_pill": 3
+            },
+            "spirit_energy": 50,
+            "product": "body_integration_pill",
+            "product_count": 1
+        },
+        "mahayana_pill": {
+            "id": "mahayana_pill",
+            "name": "大乘丹",
+            "success_value": 10,
+            "base_time": 90.0,
+            "materials": {
+                "foundation_herb": 1,
+                "body_integration_pill": 3
+            },
+            "spirit_energy": 60,
+            "product": "mahayana_pill",
+            "product_count": 1
+        },
+        "tribulation_pill": {
+            "id": "tribulation_pill",
+            "name": "渡劫丹",
+            "success_value": 8,
+            "base_time": 100.0,
+            "materials": {
+                "foundation_herb": 1,
+                "mahayana_pill": 3
+            },
+            "spirit_energy": 70,
+            "product": "tribulation_pill",
+            "product_count": 1
+        }
+    }
 }

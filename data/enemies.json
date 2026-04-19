@@ -1,81 +1,135 @@
 {
-    "templates": {
-        "wolf": {
-            "name": "野狼",
-            "name_variants": [
-                "野狼",
-                "森林狼"
-            ],
-            "growth": {
-                "health_base": 25,
-                "health_growth": 1.1,
-                "attack_base": 5,
-                "attack_growth": 1.1,
-                "defense_base": 0,
-                "defense_growth": 1.0,
-                "speed_base": 4.5,
-                "speed_growth": 0.0001
-            }
-        },
-        "snake": {
-            "name": "毒蛇",
-            "name_variants": [
-                "五步蛇",
-                "竹叶青"
-            ],
-            "growth": {
-                "health_base": 20,
-                "health_growth": 1.1,
-                "attack_base": 6,
-                "attack_growth": 1.1,
-                "defense_base": 0,
-                "defense_growth": 1.0,
-                "speed_base": 4.9,
-                "speed_growth": 0.0002
-            }
-        },
-        "boar": {
-            "name": "野猪",
-            "name_variants": [
-                "野猪",
-                "獠牙猪"
-            ],
-            "growth": {
-                "health_base": 35,
-                "health_growth": 1.1,
-                "attack_base": 4,
-                "attack_growth": 1.1,
-                "defense_base": 0,
-                "defense_growth": 1.0,
-                "speed_base": 4.5,
-                "speed_growth": 0.0001
-            }
-        },
-        "iron_back_wolf": {
-            "name": "铁背狼王",
-            "growth": {
-                "health_base": 50,
-                "health_growth": 1.1,
-                "attack_base": 6,
-                "attack_growth": 1.1,
-                "defense_base": 0,
-                "defense_growth": 1.0,
-                "speed_base": 5.5,
-                "speed_growth": 0.0002
-            }
-        },
-        "herb_guardian": {
-            "name": "破境草看守者",
-            "growth": {
-                "health_base": 50,
-                "health_growth": 1.11,
-                "attack_base": 8,
-                "attack_growth": 1.1,
-                "defense_base": 5,
-                "defense_growth": 1.1,
-                "speed_base": 4.5,
-                "speed_growth": 0.0
-            }
-        }
+  "templates": {
+    "qingwen_fox": {
+      "name": "青纹狐",
+      "name_variants": [
+        "公青纹狐",
+        "母青纹狐"
+      ],
+      "growth": {
+        "health_base": 25,
+        "health_growth": 1.1,
+        "attack_base": 5,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.5,
+        "speed_growth": 0.0001
+      }
+    },
+    "qinglin_snake": {
+      "name": "青鳞蛇",
+      "name_variants": [
+        "青鳞蛇",
+        "蜕皮青鳞蛇"
+      ],
+      "growth": {
+        "health_base": 20,
+        "health_growth": 1.1,
+        "attack_base": 6,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.9,
+        "speed_growth": 0.0002
+      }
+    },
+    "yunjiao_deer": {
+      "name": "云角鹿",
+      "name_variants": [
+        "长云角鹿",
+        "短云角鹿"
+      ],
+      "growth": {
+        "health_base": 35,
+        "health_growth": 1.1,
+        "attack_base": 4,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.5,
+        "speed_growth": 0.0001
+      }
+    },
+    "baiwen_forest_wolf": {
+      "name": "纹林狼",
+      "name_variants": [
+        "白纹林狼",
+        "灰纹林狼"
+      ],
+      "growth": {
+        "health_base": 25,
+        "health_growth": 1.1,
+        "attack_base": 5,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.5,
+        "speed_growth": 0.0001
+      }
+    },
+    "white_snake": {
+      "name": "白蛇",
+      "name_variants": [
+        "公白蛇",
+        "母白蛇"
+      ],
+      "growth": {
+        "health_base": 20,
+        "health_growth": 1.1,
+        "attack_base": 6,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.9,
+        "speed_growth": 0.0002
+      }
+    },
+    "duanzong_boar": {
+      "name": "鬃山彘",
+      "name_variants": [
+        "短鬃山彘",
+        "长鬃山彘"
+      ],
+      "growth": {
+        "health_base": 35,
+        "health_growth": 1.1,
+        "attack_base": 4,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 4.5,
+        "speed_growth": 0.0001
+      }
+    },
+    "old_post_soldier_wraith": {
+      "name": "古驿卒残魂",
+      "name_variants": [
+        "古驿卒残魂"
+      ],
+      "growth": {
+        "health_base": 40,
+        "health_growth": 1.1,
+        "attack_base": 6,
+        "attack_growth": 1.1,
+        "defense_base": 0,
+        "defense_growth": 1.0,
+        "speed_base": 5.5,
+        "speed_growth": 0.0002
+      }
+    },
+    "herb_guardian": {
+      "name": "破境草看守者",
+      "growth": {
+        "health_base": 80,
+        "health_growth": 1.1,
+        "attack_base": 6,
+        "attack_growth": 1.1,
+        "defense_base": 2,
+        "defense_growth": 1.1,
+        "speed_base": 4.5,
+        "speed_growth": 0.0
+      }
     }
+  }
 }

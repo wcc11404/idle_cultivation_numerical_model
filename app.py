@@ -15,13 +15,15 @@ from src.model.battle_model import (
     DEFAULT_MAX_FIGHTS_PER_TRIAL,
     DEFAULT_TRIALS,
     FIXED_BATTLE_RANDOM_SEED,
+    build_tower_max_floor_by_stage,
     build_checkpoint_matrix,
     build_player_attrs_from_realm,
     simulate_average,
+    simulate_trial,
 )
 from src.model.formatting import format_number
 from src.model.realm_generator import apply_generation_rules
-from src.model.time_model import build_time_rows
+from src.model.time_model import build_time_rows_with_stone_gain
 
 
 st.set_page_config(page_title="境界数值模型", layout="wide")
@@ -49,9 +51,6 @@ HIGH_TIER_CHAIN = [
     ("mahayana_pill", "body_integration_pill"),
     ("tribulation_pill", "mahayana_pill"),
 ]
-
-MINUTE_DISPLAY_REALMS = {"炼气期", "筑基期"}
-
 
 def _safe_ratio(numerator: float, denominator: float, default: float) -> float:
     if denominator == 0:
@@ -160,8 +159,10 @@ def _prepare_display_df(rows: list[dict]) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     for col in [
         "step_spirit_hours",
+        "step_stone_hours",
         "step_material_hours",
         "cumulative_spirit_days",
+        "cumulative_stone_days",
         "cumulative_material_days",
     ]:
         df[col + "_display"] = df[col].map(format_number)
@@ -341,9 +342,46 @@ def _format_drop_summary(drops: dict, item_name_map: dict[str, str]) -> str:
     return "，".join(parts)
 
 
-def _get_normal_area_editor_df(areas_data: dict, item_name_map: dict[str, str]) -> pd.DataFrame:
+def _calc_area_spirit_stone_expected_per_fight(area_cfg: dict) -> float:
+    templates = area_cfg.get("enemies_template", [])
+    if not templates:
+        return 0.0
+    weights = [float(max(0, t.get("weight", 0))) for t in templates]
+    weight_sum = sum(weights)
+    if weight_sum <= 0.0:
+        probs = [1.0 if i == 0 else 0.0 for i in range(len(templates))]
+    else:
+        probs = [w / weight_sum for w in weights]
+    expected = 0.0
+    for idx, template_cfg in enumerate(templates):
+        drop_info = template_cfg.get("drops", {}).get("spirit_stone")
+        if not drop_info:
+            continue
+        chance = float(drop_info.get("chance", 1.0))
+        min_amount = int(drop_info.get("min", 0))
+        max_amount = int(drop_info.get("max", min_amount))
+        if max_amount < min_amount:
+            max_amount = min_amount
+        expected_amount = (float(min_amount) + float(max_amount)) / 2.0
+        expected += probs[idx] * chance * expected_amount
+    return expected
+
+
+def _format_spirit_efficiency_compare(base_area_cfg: dict, draft_area_cfg: dict) -> str:
+    fights_per_hour = 3600.0 / 5.0
+    base_value = _calc_area_spirit_stone_expected_per_fight(base_area_cfg) * fights_per_hour
+    draft_value = _calc_area_spirit_stone_expected_per_fight(draft_area_cfg) * fights_per_hour
+    base_text = format_number(base_value)
+    draft_text = format_number(draft_value)
+    if base_text == draft_text:
+        return draft_text
+    return f"{base_text}→{draft_text}"
+
+
+def _get_normal_area_editor_df(areas_data: dict, item_name_map: dict[str, str], base_areas_data: dict | None = None) -> pd.DataFrame:
     rows = []
     for area_id, area_cfg in areas_data.get("normal_areas", {}).items():
+        base_area_cfg = (base_areas_data or areas_data).get("normal_areas", {}).get(area_id, area_cfg)
         templates = area_cfg.get("enemies_template", [])
         min_levels = []
         max_levels = []
@@ -370,6 +408,7 @@ def _get_normal_area_editor_df(areas_data: dict, item_name_map: dict[str, str]) 
                 "权重总和": total_weight,
                 "敌人等级范围": level_range,
                 "掉落种类": drop_summary,
+                "理论最大灵石掉落效率（每小时）": _format_spirit_efficiency_compare(base_area_cfg, area_cfg),
             }
         )
     return pd.DataFrame(rows)
@@ -399,13 +438,14 @@ def _get_area_template_editor_df(area_cfg: dict, enemy_name_map: dict[str, str],
 def _get_area_drop_editor_df(area_cfg: dict, template_index: int, item_name_map: dict[str, str]) -> pd.DataFrame:
     templates = area_cfg.get("enemies_template", [])
     if template_index < 0 or template_index >= len(templates):
-        return pd.DataFrame(columns=["item_id", "掉落名称", "min", "max", "chance"])
+        return pd.DataFrame(columns=["删除", "item_id", "掉落名称", "min", "max", "chance"])
     rows = []
     for item_id, info in templates[template_index].get("drops", {}).items():
         min_amount = int(info.get("min", 0))
         max_amount = int(info.get("max", min_amount))
         rows.append(
             {
+                "删除": False,
                 "item_id": str(item_id),
                 "掉落名称": item_name_map.get(str(item_id), str(item_id)),
                 "min": min_amount,
@@ -528,11 +568,14 @@ def _build_realm_max_summary(df: pd.DataFrame, realm_order: list[str]) -> pd.Dat
         df.groupby("realm_name", as_index=False)
         .agg(
             realm_spirit_days=("step_spirit_hours", lambda x: float(x.sum()) / 24.0),
+            realm_stone_days=("step_stone_hours", lambda x: float(x.sum()) / 24.0),
             realm_material_days=("step_material_hours", lambda x: float(x.sum()) / 24.0),
         )
     )
-    grouped["realm_max_days"] = grouped[["realm_spirit_days", "realm_material_days"]].max(axis=1)
+    grouped["realm_gathering_days"] = grouped["realm_spirit_days"] + grouped["realm_stone_days"]
+    grouped["realm_max_days"] = grouped[["realm_gathering_days", "realm_material_days"]].max(axis=1)
     grouped["realm_spirit_days_display"] = grouped["realm_spirit_days"].map(format_number)
+    grouped["realm_stone_days_display"] = grouped["realm_stone_days"].map(format_number)
     grouped["realm_material_days_display"] = grouped["realm_material_days"].map(format_number)
     grouped["realm_max_days_display"] = grouped["realm_max_days"].map(format_number)
     order_rank = {name: i for i, name in enumerate(realm_order)}
@@ -544,10 +587,12 @@ def _build_realm_max_summary(df: pd.DataFrame, realm_order: list[str]) -> pd.Dat
 def _format_step_or_cumulative_duration(value: float, *, source_unit: str, realm_name: str) -> str:
     if abs(float(value)) < 1e-12:
         return ""
-    use_minutes = realm_name in MINUTE_DISPLAY_REALMS
-    if source_unit == "hours":
-        return f"{format_number(value * 60.0)} 分钟" if use_minutes else f"{format_number(value)} 小时"
-    return f"{format_number(value * 24.0 * 60.0)} 分钟" if use_minutes else f"{format_number(value)} 天"
+    total_hours = float(value) if source_unit == "hours" else float(value) * 24.0
+    if total_hours < 1.0:
+        return f"{format_number(total_hours * 60.0)} 分钟"
+    if total_hours < 24.0:
+        return f"{format_number(total_hours)} 小时"
+    return f"{format_number(total_hours / 24.0)} 天"
 
 
 def _build_realm_summary_display_table(summary_df: pd.DataFrame) -> pd.DataFrame:
@@ -558,6 +603,7 @@ def _build_realm_summary_display_table(summary_df: pd.DataFrame) -> pd.DataFrame
             {
                 "大境界": realm_name,
                 "该境界灵气总耗时": _format_step_or_cumulative_duration(float(row["realm_spirit_days"]), source_unit="days", realm_name=realm_name),
+                "该境界灵石总耗时": _format_step_or_cumulative_duration(float(row["realm_stone_days"]), source_unit="days", realm_name=realm_name),
                 "该境界材料总耗时": _format_step_or_cumulative_duration(float(row["realm_material_days"]), source_unit="days", realm_name=realm_name),
                 "该境界Max耗时": _format_step_or_cumulative_duration(float(row["realm_max_days"]), source_unit="days", realm_name=realm_name),
             }
@@ -577,8 +623,10 @@ def _build_upgrade_detail_display_table(display_df: pd.DataFrame) -> pd.DataFram
                 "灵气消耗": int(row["spirit_energy_cost"]),
                 "破境草需求": "" if int(row["foundation_herb_needed"]) == 0 else int(row["foundation_herb_needed"]),
                 "层间灵气耗时": _format_step_or_cumulative_duration(float(row["step_spirit_hours"]), source_unit="hours", realm_name=realm_name),
+                "层间灵石耗时": _format_step_or_cumulative_duration(float(row["step_stone_hours"]), source_unit="hours", realm_name=realm_name),
                 "层间材料耗时": _format_step_or_cumulative_duration(float(row["step_material_hours"]), source_unit="hours", realm_name=realm_name),
                 "累计灵气耗时": _format_step_or_cumulative_duration(float(row["cumulative_spirit_days"]), source_unit="days", realm_name=realm_name),
+                "累计灵石耗时": _format_step_or_cumulative_duration(float(row["cumulative_stone_days"]), source_unit="days", realm_name=realm_name),
                 "累计材料耗时": _format_step_or_cumulative_duration(float(row["cumulative_material_days"]), source_unit="days", realm_name=realm_name),
             }
         )
@@ -620,6 +668,143 @@ def _build_battle_matrix(
         target_realms=("炼气期", "筑基期", "金丹期"),
     )
     return pd.DataFrame(result["summary_rows"]), pd.DataFrame(result["reward_rows"])
+
+
+@st.cache_data(show_spinner=False)
+def _build_level_max_spirit_stone_gain_map(
+    realms_data: dict,
+    areas_data: dict,
+    enemies_data: dict,
+    *,
+    k_value: float,
+    skill_coef: float,
+    battle_interval_seconds: float,
+) -> dict[str, float]:
+    normal_areas = areas_data.get("normal_areas", {})
+    gain_map: dict[str, float] = {}
+    for realm_name in realms_data.get("realm_order", []):
+        max_level = int(realms_data.get("realms", {}).get(realm_name, {}).get("max_level", 0))
+        for level in range(1, max_level + 1):
+            player_attrs = build_player_attrs_from_realm(realms_data, realm_name, level)
+            best_spirit_stone_per_hour = 0.0
+            for _, area_cfg in normal_areas.items():
+                avg_result = simulate_average(
+                    player_attrs=player_attrs,
+                    area_cfg=area_cfg,
+                    enemies_data=enemies_data,
+                    k_value=k_value,
+                    skill_coef=skill_coef,
+                    penetration=0.0,
+                    trials=DEFAULT_TRIALS,
+                    max_fights_per_trial=DEFAULT_MAX_FIGHTS_PER_TRIAL,
+                    battle_interval_seconds=battle_interval_seconds,
+                    seed=FIXED_BATTLE_RANDOM_SEED,
+                )
+                spirit_stone_per_hour = float(avg_result.get("avg_item_per_hour", {}).get("spirit_stone", 0.0))
+                if spirit_stone_per_hour > best_spirit_stone_per_hour:
+                    best_spirit_stone_per_hour = spirit_stone_per_hour
+            gain_map[f"{realm_name}:{level}"] = best_spirit_stone_per_hour
+    return gain_map
+
+
+def _format_stage_name(realms_data: dict, realm_name: str, level: int) -> str:
+    level_names = realms_data.get("realms", {}).get(realm_name, {}).get("level_names", {})
+    return f"{realm_name}{level_names.get(str(level), f'第{level}层')}"
+
+
+def _check_foundation_cave_min_pass(
+    realms_data: dict,
+    areas_data: dict,
+    enemies_data: dict,
+    *,
+    k_value: float,
+    skill_coef: float,
+    battle_interval_seconds: float,
+) -> dict:
+    daily_area = areas_data.get("daily_areas", {}).get("foundation_herb_cave")
+    if not daily_area:
+        return {"exists": False}
+
+    lianqi_cfg = realms_data.get("realms", {}).get("炼气期", {})
+    lianqi_max = int(lianqi_cfg.get("max_level", 10))
+    start_player = build_player_attrs_from_realm(realms_data, "炼气期", lianqi_max)
+    start_result = simulate_trial(
+        player_attrs=start_player,
+        area_cfg=daily_area,
+        enemies_data=enemies_data,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        penetration=0.0,
+        max_fights_per_trial=1,
+        battle_interval_seconds=battle_interval_seconds,
+        seed=FIXED_BATTLE_RANDOM_SEED,
+    )
+    start_pass = int(start_result.get("victory_count", 0)) >= 1
+    if not start_pass:
+        return {
+            "exists": True,
+            "can_lianqi_max": False,
+            "lianqi_max_stage": _format_stage_name(realms_data, "炼气期", lianqi_max),
+        }
+
+    min_pass_level = lianqi_max
+    for level in range(lianqi_max - 1, 0, -1):
+        player = build_player_attrs_from_realm(realms_data, "炼气期", level)
+        result = simulate_trial(
+            player_attrs=player,
+            area_cfg=daily_area,
+            enemies_data=enemies_data,
+            k_value=k_value,
+            skill_coef=skill_coef,
+            penetration=0.0,
+            max_fights_per_trial=1,
+            battle_interval_seconds=battle_interval_seconds,
+            seed=FIXED_BATTLE_RANDOM_SEED,
+        )
+        if int(result.get("victory_count", 0)) >= 1:
+            min_pass_level = level
+        else:
+            break
+
+    return {
+        "exists": True,
+        "can_lianqi_max": True,
+        "lianqi_max_stage": _format_stage_name(realms_data, "炼气期", lianqi_max),
+        "min_pass_stage": _format_stage_name(realms_data, "炼气期", min_pass_level),
+    }
+
+
+def _build_tower_stage_max_floor_table(
+    realms_data: dict,
+    areas_data: dict,
+    enemies_data: dict,
+    *,
+    k_value: float,
+    skill_coef: float,
+    battle_interval_seconds: float,
+) -> pd.DataFrame:
+    rows = build_tower_max_floor_by_stage(
+        realms_data=realms_data,
+        areas_data=areas_data,
+        enemies_data=enemies_data,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        penetration=0.0,
+        battle_interval_seconds=battle_interval_seconds,
+        seed=FIXED_BATTLE_RANDOM_SEED,
+        target_realms=("筑基期", "金丹期"),
+    )
+    table_rows = []
+    for row in rows:
+        realm_name = str(row.get("realm_name", ""))
+        level = int(row.get("level", 1))
+        table_rows.append(
+            {
+                "境界层级": _format_stage_name(realms_data, realm_name, level),
+                "最大可通关层": int(row.get("max_pass_floor", 0)),
+            }
+        )
+    return pd.DataFrame(table_rows)
 
 
 def _build_item_name_map(items_data: dict, recipes_data: dict) -> dict[str, str]:
@@ -825,6 +1010,7 @@ def _render_compare_table_html(
 """
     st.markdown(table_html, unsafe_allow_html=True)
 
+
 base_realms_data, base_recipes_data, base_areas_data, base_enemies_data, base_items_data = _load_data()
 _init_realm_draft_state(base_realms_data)
 _init_recipe_draft_state(base_recipes_data)
@@ -836,15 +1022,112 @@ draft_realms = _build_draft_realms(base_realms_data)
 draft_recipes = _build_draft_recipes(base_recipes_data, st.session_state["draft_high_tier_recipe_rows"])
 draft_areas = _build_draft_areas(base_areas_data)
 draft_enemies = _build_draft_enemies(base_enemies_data, st.session_state["draft_enemy_template_rows"])
-base_display_df = _prepare_display_df(build_time_rows(base_realms_data, base_recipes_data))
-draft_display_df = _prepare_display_df(build_time_rows(draft_realms, draft_recipes))
+base_stone_gain_map = _build_level_max_spirit_stone_gain_map(
+    realms_data=base_realms_data,
+    areas_data=base_areas_data,
+    enemies_data=base_enemies_data,
+    k_value=DEFAULT_K_VALUE,
+    skill_coef=1.0,
+    battle_interval_seconds=5.0,
+)
+draft_stone_gain_map = _build_level_max_spirit_stone_gain_map(
+    realms_data=draft_realms,
+    areas_data=draft_areas,
+    enemies_data=draft_enemies,
+    k_value=DEFAULT_K_VALUE,
+    skill_coef=1.0,
+    battle_interval_seconds=5.0,
+)
+base_display_df = _prepare_display_df(
+    build_time_rows_with_stone_gain(
+        realms_data=base_realms_data,
+        recipes_data=base_recipes_data,
+        stone_gain_per_hour_map=base_stone_gain_map,
+    )
+)
+draft_display_df = _prepare_display_df(
+    build_time_rows_with_stone_gain(
+        realms_data=draft_realms,
+        recipes_data=draft_recipes,
+        stone_gain_per_hour_map=draft_stone_gain_map,
+    )
+)
+
+PAGE_LABELS = {
+    "cultivation": "修炼建模可视化",
+    "battle": "战斗建模可视化",
+    "areas": "历练区域配置（areas）",
+    "realms": "境界配置（realms）",
+    "enemies": "敌人模板配置（enemies）",
+    "recipes": "丹方配置（recipes）",
+}
+SIDEBAR_GROUPS = [
+    ("建模页面", [("📈", "cultivation"), ("⚔️", "battle")]),
+    ("配置工具", [("🧭", "areas"), ("🪷", "realms"), ("🐺", "enemies"), ("🧪", "recipes")]),
+]
+
+if "current_page_key" not in st.session_state or st.session_state["current_page_key"] not in PAGE_LABELS:
+    st.session_state["current_page_key"] = "cultivation"
+current_page_key = st.session_state["current_page_key"]
 
 with st.sidebar:
-    page = st.radio(
-        "页面导航",
-        options=["修炼建模可视化", "战斗建模可视化", "历练区域配置（areas）", "境界配置（realms）", "敌人模板配置（enemies）", "丹方配置（recipes）"],
-        index=0,
+    st.markdown(
+        """
+<style>
+[data-testid="stSidebar"] {
+    background: #eef0f5;
+}
+[data-testid="stSidebar"] .block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.ic-nav-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4a4f5a;
+    margin: 14px 0 8px 0;
+}
+[data-testid="stSidebar"] div.stButton > button {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin: 2px 0;
+    border: none;
+    background: transparent;
+    color: #495057;
+    font-size: 15px;
+    justify-content: flex-start;
+    text-align: left;
+}
+[data-testid="stSidebar"] div.stButton > button:hover {
+    background: #dfe4ef;
+    color: #2f3540;
+}
+[data-testid="stSidebar"] div.stButton > button[kind="primary"] {
+    background: #d9deea;
+    color: #222831;
+    font-weight: 700;
+}
+</style>
+""",
+        unsafe_allow_html=True,
     )
+    st.markdown("### 页面")
+    for group_title, items in SIDEBAR_GROUPS:
+        st.markdown(f'<div class="ic-nav-title">{html.escape(group_title)}</div>', unsafe_allow_html=True)
+        for icon, key in items:
+            label = PAGE_LABELS[key].replace("可视化", "")
+            if st.button(
+                f"{icon}  {label}",
+                key=f"sidebar_nav_{key}",
+                type="primary" if key == current_page_key else "secondary",
+                use_container_width=True,
+            ):
+                current_page_key = key
+                st.session_state["current_page_key"] = current_page_key
+                st.rerun()
+
+page = PAGE_LABELS[current_page_key]
 
 if page == "修炼建模可视化":
     st.caption("当前页面展示的是“草稿预览效果”，包含未保存到文件的配置改动。")
@@ -870,7 +1153,7 @@ if page == "修炼建模可视化":
         )
 
     st.subheader("大境界耗时汇总（Max）")
-    st.caption("炼气期、筑基期的耗时按分钟显示；其余大境界继续按天显示。")
+    st.caption("时间单位规则：小于1小时显示分钟；小于1天显示小时；其余显示天。")
     before_realm_summary_df = _build_realm_max_summary(base_display_df, base_realms_data["realm_order"])
     after_realm_summary_df = _build_realm_max_summary(draft_display_df, draft_realms["realm_order"])
     if not after_realm_summary_df.empty:
@@ -879,11 +1162,11 @@ if page == "修炼建模可视化":
         _render_compare_table_html(
             before_summary_table,
             after_summary_table,
-            numeric_columns=["该境界灵气总耗时", "该境界材料总耗时", "该境界Max耗时"],
+            numeric_columns=["该境界灵气总耗时", "该境界灵石总耗时", "该境界材料总耗时", "该境界Max耗时"],
         )
 
     st.subheader("升级明细")
-    st.caption("炼气期、筑基期的层间/累计耗时按分钟显示；其余大境界保持层间小时、累计天。")
+    st.caption("时间单位规则：小于1小时显示分钟；小于1天显示小时；其余显示天。")
     before_table_df = _build_upgrade_detail_display_table(base_display_df)
     after_table_df = _build_upgrade_detail_display_table(draft_display_df)
     _render_compare_table_html(
@@ -895,8 +1178,10 @@ if page == "修炼建模可视化":
             "灵气消耗",
             "破境草需求",
             "层间灵气耗时",
+            "层间灵石耗时",
             "层间材料耗时",
             "累计灵气耗时",
+            "累计灵石耗时",
             "累计材料耗时",
         ],
     )
@@ -954,6 +1239,11 @@ elif page == "境界配置（realms）":
                 key="page2_stat_realm_multiplier",
             ))
             st.session_state["draft_stat_realm_multiplier"] = page2_stat_realm_mult
+            if (page2_stat_level_mult ** 9) >= page2_stat_realm_mult:
+                st.markdown(
+                    '<span style="color:#c62828;">提示：属性层内递推倍率的9次方应小于属性跨大境界首层倍率。</span>',
+                    unsafe_allow_html=True,
+                )
 
     with res_col:
         st.markdown("**资源（筑基1层基准 + 资源倍率）**")
@@ -1005,14 +1295,20 @@ elif page == "境界配置（realms）":
                 key="page2_resource_realm_multiplier",
             ))
             st.session_state["draft_resource_realm_multiplier"] = page2_resource_realm_mult
+            if (page2_resource_level_mult ** 9) >= page2_resource_realm_mult:
+                st.markdown(
+                    '<span style="color:#c62828;">提示：资源层内递推倍率的9次方应小于资源跨大境界首层倍率。</span>',
+                    unsafe_allow_html=True,
+                )
 
     st.subheader("炼气期手动编辑（保留手动值）")
+    lianqi_editor_key = "page2_lianqi_editor"
     edited_lianqi_df = st.data_editor(
         pd.DataFrame(st.session_state["draft_lianqi_rows"]),
         hide_index=True,
         use_container_width=True,
         disabled=["层级"],
-        key="page2_lianqi_editor",
+        key=lianqi_editor_key,
     )
     st.session_state["draft_lianqi_rows"] = edited_lianqi_df.to_dict("records")
 
@@ -1031,11 +1327,17 @@ elif page == "历练区域配置（areas）":
     st.caption("上表用于批量改区域名称和默认连续历练；下方用于精细调整所选区域的描述、敌人池和掉落。")
     st.caption("当前页仅编辑 `normal_areas`，因为战斗建模页当前只消费普通历练区域。")
 
+    area_overview_df = _get_normal_area_editor_df(
+        st.session_state["draft_areas_data"],
+        item_name_map,
+        base_areas_data=base_areas_data,
+    )
+    area_overview_editor_key = "page_area_overview_editor"
     edited_area_df = st.data_editor(
-        _get_normal_area_editor_df(st.session_state["draft_areas_data"], item_name_map),
+        area_overview_df,
         hide_index=True,
         use_container_width=True,
-        disabled=["area_id", "敌人池数量", "权重总和", "敌人等级范围", "掉落种类"],
+        disabled=["area_id", "敌人池数量", "权重总和", "敌人等级范围", "掉落种类", "理论最大灵石掉落效率（每小时）"],
         column_config={
             "area_id": st.column_config.TextColumn("area_id"),
             "区域名称": st.column_config.TextColumn("区域名称"),
@@ -1044,8 +1346,9 @@ elif page == "历练区域配置（areas）":
             "权重总和": st.column_config.NumberColumn("权重总和"),
             "敌人等级范围": st.column_config.TextColumn("敌人等级范围"),
             "掉落种类": st.column_config.TextColumn("掉落种类"),
+            "理论最大灵石掉落效率（每小时）": st.column_config.TextColumn("理论最大灵石掉落效率（每小时）"),
         },
-        key="page_area_overview_editor",
+        key=area_overview_editor_key,
     )
 
     draft_areas_data = deepcopy(st.session_state["draft_areas_data"])
@@ -1074,8 +1377,9 @@ elif page == "历练区域配置（areas）":
             (label for label, area_id in area_label_to_id.items() if area_id == current_area_id),
             next(iter(area_label_to_id.keys())),
         )
+        st.header("当前区域配置")
         selected_area_label = st.selectbox(
-            "当前编辑区域",
+            "选择区域",
             options=list(area_label_to_id.keys()),
             index=list(area_label_to_id.keys()).index(selected_area_label),
             key="page_area_selected_area_label",
@@ -1096,8 +1400,13 @@ elif page == "历练区域配置（areas）":
 
         enemy_name_map = _build_enemy_name_map(draft_enemies)
         template_df = _get_area_template_editor_df(selected_area_cfg, enemy_name_map, item_name_map)
+        template_editor_key = f"page_area_template_editor_{selected_area_id}"
+        template_rows_state_key = f"draft_area_template_rows_{selected_area_id}"
+        if template_rows_state_key not in st.session_state:
+            st.session_state[template_rows_state_key] = template_df.to_dict("records")
+        source_template_df = pd.DataFrame(st.session_state.get(template_rows_state_key, template_df.to_dict("records")))
         edited_template_df = st.data_editor(
-            template_df,
+            source_template_df,
             hide_index=True,
             use_container_width=True,
             disabled=["序号", "敌人名称", "掉落摘要"],
@@ -1110,8 +1419,9 @@ elif page == "历练区域配置（areas）":
                 "权重": st.column_config.NumberColumn("权重", min_value=0, step=1),
                 "掉落摘要": st.column_config.TextColumn("掉落摘要"),
             },
-            key=f"page_area_template_editor_{selected_area_id}",
+            key=template_editor_key,
         )
+        st.session_state[template_rows_state_key] = edited_template_df.to_dict("records")
 
         existing_templates = list(selected_area_cfg.get("enemies_template", []))
         normalized_templates = []
@@ -1167,6 +1477,7 @@ elif page == "历练区域配置（areas）":
                 selected_template_index,
                 item_name_map,
             )
+            drop_editor_key = f"page_area_drop_editor_{selected_area_id}_{selected_template_index}"
             edited_drop_df = st.data_editor(
                 drop_df,
                 hide_index=True,
@@ -1174,23 +1485,67 @@ elif page == "历练区域配置（areas）":
                 num_rows="dynamic",
                 disabled=["掉落名称"],
                 column_config={
+                    "删除": st.column_config.CheckboxColumn("删除"),
                     "item_id": st.column_config.SelectboxColumn("item_id", options=sorted(item_name_map.keys())),
                     "掉落名称": st.column_config.TextColumn("掉落名称"),
                     "min": st.column_config.NumberColumn("最小数量", min_value=0, step=1),
                     "max": st.column_config.NumberColumn("最大数量", min_value=0, step=1),
                     "chance": st.column_config.NumberColumn("概率", min_value=0.0, max_value=1.0, step=0.05, format="%.2f"),
                 },
-                key=f"page_area_drop_editor_{selected_area_id}_{selected_template_index}",
+                key=drop_editor_key,
             )
+
+            if st.button("删除勾选行", key=f"page_area_drop_delete_rows_btn_{selected_area_id}_{selected_template_index}"):
+                filtered_df = edited_drop_df[~edited_drop_df["删除"].fillna(False)].copy()
+                filtered_df["删除"] = False
+                draft_areas_data = deepcopy(st.session_state["draft_areas_data"])
+                normalized_after_delete = {}
+                for _, row in filtered_df.iterrows():
+                    item_raw = row.get("item_id", "")
+                    if item_raw is None or (isinstance(item_raw, str) and item_raw.strip() == "") or pd.isna(item_raw):
+                        continue
+                    item_id = str(item_raw).strip()
+                    if not item_id:
+                        continue
+                    min_amount = max(0, int(float(row.get("min", 1) or 1)))
+                    max_amount = max(min_amount, int(float(row.get("max", min_amount) or min_amount)))
+                    chance = min(1.0, max(0.0, float(row.get("chance", 1.0) or 1.0)))
+                    normalized_after_delete[item_id] = {"min": min_amount, "max": max_amount, "chance": chance}
+                draft_areas_data["normal_areas"][selected_area_id]["enemies_template"][selected_template_index]["drops"] = normalized_after_delete
+                st.session_state["draft_areas_data"] = draft_areas_data
+                st.rerun()
+
+            def _safe_float(value, default: float) -> float:
+                if value is None or (isinstance(value, str) and value.strip() == ""):
+                    return default
+                if pd.isna(value):
+                    return default
+                try:
+                    return float(value)
+                except (TypeError, ValueError):
+                    return default
 
             normalized_drops = {}
             for _, row in edited_drop_df.iterrows():
-                item_id = str(row.get("item_id", "")).strip()
+                item_raw = row.get("item_id", "")
+                if item_raw is None or (isinstance(item_raw, str) and item_raw.strip() == "") or pd.isna(item_raw):
+                    continue
+                item_id = str(item_raw).strip()
                 if not item_id:
                     continue
-                min_amount = max(0, int(float(row.get("min", 0))))
-                max_amount = max(min_amount, int(float(row.get("max", min_amount))))
-                chance = min(1.0, max(0.0, float(row.get("chance", 1.0))))
+                if bool(row.get("删除", False)):
+                    continue
+
+                min_raw = row.get("min", None)
+                max_raw = row.get("max", None)
+                chance_raw = row.get("chance", None)
+                # 新增行仅选中 item_id 时，自动给默认值：min=1 max=1 chance=1.0
+                min_default = 1.0 if (min_raw is None or (isinstance(min_raw, str) and min_raw.strip() == "") or pd.isna(min_raw)) else 0.0
+                min_amount = max(0, int(_safe_float(min_raw, min_default)))
+                max_default = float(min_amount) if not (max_raw is None or (isinstance(max_raw, str) and max_raw.strip() == "") or pd.isna(max_raw)) else 1.0
+                max_amount = max(min_amount, int(_safe_float(max_raw, max_default)))
+                chance_default = 1.0 if (chance_raw is None or (isinstance(chance_raw, str) and chance_raw.strip() == "") or pd.isna(chance_raw)) else 0.0
+                chance = min(1.0, max(0.0, _safe_float(chance_raw, chance_default)))
                 normalized_drops[item_id] = {
                     "min": min_amount,
                     "max": max_amount,
@@ -1232,6 +1587,7 @@ div[data-testid="stDataEditor"] table tbody td input {
     )
 
     enemy_df = pd.DataFrame(st.session_state["draft_enemy_template_rows"])
+    enemy_editor_key = "page_enemy_template_editor"
     edited_enemy_df = st.data_editor(
         enemy_df,
         hide_index=True,
@@ -1247,7 +1603,7 @@ div[data-testid="stDataEditor"] table tbody td input {
             "attack_growth": st.column_config.NumberColumn("攻击增长率", min_value=0.0, step=0.01, format="%.4f"),
             "defense_growth": st.column_config.NumberColumn("防御增长率", min_value=0.0, step=0.01, format="%.4f"),
         },
-        key="page_enemy_template_editor",
+        key=enemy_editor_key,
     )
     # 编辑态不做即时强制清洗，避免首次回车后被回写覆盖。
     st.session_state["draft_enemy_template_rows"] = edited_enemy_df.to_dict("records")
@@ -1307,6 +1663,7 @@ elif page == "丹方配置（recipes）":
             st.success(f"已将“{batch_target}”统一设置为 {batch_value}")
 
     recipe_df = pd.DataFrame(st.session_state["draft_high_tier_recipe_rows"])
+    recipe_editor_key = "page3_recipe_editor"
     edited_recipe_df = st.data_editor(
         recipe_df,
         hide_index=True,
@@ -1319,7 +1676,7 @@ elif page == "丹方配置（recipes）":
             "低阶丹药数量": st.column_config.NumberColumn("低阶丹药数量", min_value=1, step=1),
             "破境草数量": st.column_config.NumberColumn("破境草数量", min_value=1, step=1),
         },
-        key="page3_recipe_editor",
+        key=recipe_editor_key,
     )
 
     valid_rows = []
@@ -1365,6 +1722,68 @@ elif page == "战斗建模可视化":
         "每次死亡前最多模拟30场，最多模拟3次，未死亡部分按剩余血量比例外推；"
         f"随机种子固定为 {FIXED_BATTLE_RANDOM_SEED}。"
     )
+
+    st.subheader("每日区域：破境草洞穴可通关境界")
+    base_cave_result = _check_foundation_cave_min_pass(
+        realms_data=base_realms_data,
+        areas_data=base_areas_data,
+        enemies_data=base_enemies_data,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        battle_interval_seconds=battle_interval_seconds,
+    )
+    draft_cave_result = _check_foundation_cave_min_pass(
+        realms_data=draft_realms,
+        areas_data=draft_areas,
+        enemies_data=draft_enemies,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        battle_interval_seconds=battle_interval_seconds,
+    )
+    if not draft_cave_result.get("exists", False):
+        st.info("未找到每日区域：破境草洞穴。")
+    else:
+        if not draft_cave_result.get("can_lianqi_max", False):
+            fail_text = f'{draft_cave_result.get("lianqi_max_stage", "炼气大圆满")}不能打过破境草洞穴'
+            st.markdown(f'<span style="color:#c62828;font-weight:700;">{html.escape(fail_text)}</span>', unsafe_allow_html=True)
+        else:
+            before_text = (
+                base_cave_result.get("min_pass_stage", "")
+                if base_cave_result.get("can_lianqi_max", False)
+                else f'{base_cave_result.get("lianqi_max_stage", "炼气大圆满")}不能打过'
+            )
+            after_text = draft_cave_result.get("min_pass_stage", "")
+            st.markdown(
+                f'最小可通关境界：{_build_compare_html(before_text, after_text)}',
+                unsafe_allow_html=True,
+            )
+
+    st.subheader("南麓试练塔：筑基1层到金丹大圆满最大可通关层")
+    st.caption("规则：逐层检测，每层依次模拟塔配置中的每种敌人；同层只要有一种敌人可通关，即视为可通关。")
+    base_tower_df = _build_tower_stage_max_floor_table(
+        realms_data=base_realms_data,
+        areas_data=base_areas_data,
+        enemies_data=base_enemies_data,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        battle_interval_seconds=battle_interval_seconds,
+    )
+    draft_tower_df = _build_tower_stage_max_floor_table(
+        realms_data=draft_realms,
+        areas_data=draft_areas,
+        enemies_data=draft_enemies,
+        k_value=k_value,
+        skill_coef=skill_coef,
+        battle_interval_seconds=battle_interval_seconds,
+    )
+    if draft_tower_df.empty:
+        st.info("未找到南麓试练塔配置或目标境界数据。")
+    else:
+        _render_compare_table_html(
+            base_tower_df,
+            draft_tower_df,
+            numeric_columns=["最大可通关层"],
+        )
 
     normal_area_options = _get_normal_area_options(draft_areas)
     if not normal_area_options:

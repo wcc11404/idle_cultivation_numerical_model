@@ -7,8 +7,17 @@ FOUNDATION_HERB_PER_DAY = 30
 
 
 def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
+    return build_time_rows_with_stone_gain(realms_data=realms_data, recipes_data=recipes_data, stone_gain_per_hour_map={})
+
+
+def build_time_rows_with_stone_gain(
+    realms_data: Dict,
+    recipes_data: Dict,
+    stone_gain_per_hour_map: Dict[str, float],
+) -> List[Dict]:
     rows: List[Dict] = []
     cumulative_spirit_days = 0.0
+    cumulative_stone_days = 0.0
     cumulative_material_days = 0.0
     step_index = 0
 
@@ -26,6 +35,8 @@ def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
             spirit_stone_cost = int(level_data.get("spirit_stone_cost", 0))
             spirit_cost = float(level_data["spirit_energy_cost"])
             step_spirit_hours = spirit_cost / spirit_gain_speed / 3600.0 if spirit_gain_speed > 0 else 0.0
+            stone_gain_per_hour = float(stone_gain_per_hour_map.get(f"{realm_name}:{level}", 0.0))
+            step_stone_hours = (float(spirit_stone_cost) / stone_gain_per_hour) if stone_gain_per_hour > 0.0 else 0.0
 
             materials = get_breakthrough_materials_for_step(realms_data, realm_name, level)
             herb_needed = calc_foundation_herb_needed(materials, recipes_data)
@@ -33,6 +44,7 @@ def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
             step_material_hours = step_material_days * 24.0
 
             cumulative_spirit_days += step_spirit_hours / 24.0
+            cumulative_stone_days += step_stone_hours / 24.0
             cumulative_material_days += step_material_days
 
             step_index += 1
@@ -44,11 +56,14 @@ def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
                     "to_stage": next_target,
                     "spirit_gain_speed": spirit_gain_speed,
                     "spirit_stone_cost": spirit_stone_cost,
+                    "spirit_stone_gain_per_hour": stone_gain_per_hour,
                     "spirit_energy_cost": int(spirit_cost),
                     "foundation_herb_needed": herb_needed,
                     "step_spirit_hours": step_spirit_hours,
+                    "step_stone_hours": step_stone_hours,
                     "step_material_hours": step_material_hours,
                     "cumulative_spirit_days": cumulative_spirit_days,
+                    "cumulative_stone_days": cumulative_stone_days,
                     "cumulative_material_days": cumulative_material_days,
                 }
             )
