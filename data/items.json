@@ -27,6 +27,15 @@
 			"description": "用于炼丹的基础草药，具有广泛药用用途",
 			"icon": "res://assets/items/mat_herb.png"
 		},
+		"spirit_liquid": {
+			"id": "spirit_liquid",
+			"name": "灵液",
+			"type": 1,
+			"quality": 1,
+			"max_stack": 9999,
+			"description": "采集灵草时伴生的灵液，可用于后续高阶炼丹研究",
+			"icon": "res://assets/items/mat_herb.png"
+		},
 		"foundation_herb": {
 			"id": "foundation_herb",
 			"name": "破境草",
@@ -166,6 +175,19 @@
 			"effect": {
 				"type": "unlock_spell",
 				"spell_id": "alchemy"
+			}
+		},
+		"spell_herb_gathering": {
+			"id": "spell_herb_gathering",
+			"name": "草药采集术",
+			"type": 4,
+			"quality": 0,
+			"max_stack": 99,
+			"description": "使用后可解锁草药采集术法",
+			"icon": "res://assets/items/spell_alchemy.png",
+			"effect": {
+				"type": "unlock_spell",
+				"spell_id": "herb_gathering"
 			}
 		},
 		"foundation_pill": {
@@ -378,6 +400,7 @@
 				"spell_basic_steps": 1,
 				"spell_basic_health": 1,
 				"spell_alchemy": 1,
+				"spell_herb_gathering": 1,
 				"alchemy_furnace": 1,
 				"recipe_health_pill": 1,
 				"recipe_spirit_pill": 1,
