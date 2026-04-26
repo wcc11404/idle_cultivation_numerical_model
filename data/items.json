@@ -9,6 +9,15 @@
 			"description": "修仙界的通用货币",
 			"icon": "res://assets/items/spirit_stone.png"
 		},
+		"immortal_crystal": {
+			"id": "immortal_crystal",
+			"name": "仙晶",
+			"type": 0,
+			"quality": 3,
+			"max_stack": 999999999,
+			"description": "疑似仙人的货币，可用于购买一些稀有物品。",
+			"icon": "res://assets/items/spirit_stone.png"
+		},
 		"mat_iron": {
 			"id": "mat_iron",
 			"name": "玄铁",

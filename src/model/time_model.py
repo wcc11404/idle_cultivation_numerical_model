@@ -3,17 +3,22 @@ from typing import Dict, List
 from src.model.material_model import calc_foundation_herb_needed, get_breakthrough_materials_for_step
 
 
-FOUNDATION_HERB_PER_DAY = 30
+DEFAULT_FOUNDATION_HERB_PER_DAY = 30.0
 
 
 def build_time_rows(realms_data: Dict, recipes_data: Dict) -> List[Dict]:
-    return build_time_rows_with_stone_gain(realms_data=realms_data, recipes_data=recipes_data, stone_gain_per_hour_map={})
+    return build_time_rows_with_stone_gain(
+        realms_data=realms_data,
+        recipes_data=recipes_data,
+        stone_gain_per_hour_map={},
+    )
 
 
 def build_time_rows_with_stone_gain(
     realms_data: Dict,
     recipes_data: Dict,
     stone_gain_per_hour_map: Dict[str, float],
+    foundation_herb_per_day: float = DEFAULT_FOUNDATION_HERB_PER_DAY,
 ) -> List[Dict]:
     rows: List[Dict] = []
     cumulative_spirit_days = 0.0
@@ -40,7 +45,8 @@ def build_time_rows_with_stone_gain(
 
             materials = get_breakthrough_materials_for_step(realms_data, realm_name, level)
             herb_needed = calc_foundation_herb_needed(materials, recipes_data)
-            step_material_days = float(herb_needed) / float(FOUNDATION_HERB_PER_DAY)
+            safe_foundation_herb_per_day = max(float(foundation_herb_per_day), 1.0)
+            step_material_days = float(herb_needed) / safe_foundation_herb_per_day
             step_material_hours = step_material_days * 24.0
 
             cumulative_spirit_days += step_spirit_hours / 24.0

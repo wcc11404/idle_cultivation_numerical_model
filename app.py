@@ -42,7 +42,30 @@ def _load_data():
     )
 
 
-HIGH_TIER_CHAIN = [
+def _build_time_rows_with_stone_gain_safe(
+    realms_data: dict,
+    recipes_data: dict,
+    stone_gain_per_hour_map: dict[str, float],
+    foundation_herb_per_day: float,
+):
+    try:
+        return build_time_rows_with_stone_gain(
+            realms_data=realms_data,
+            recipes_data=recipes_data,
+            stone_gain_per_hour_map=stone_gain_per_hour_map,
+            foundation_herb_per_day=foundation_herb_per_day,
+        )
+    except TypeError:
+        # 兼容热更新过程中旧函数签名仍驻留的情况
+        return build_time_rows_with_stone_gain(
+            realms_data=realms_data,
+            recipes_data=recipes_data,
+            stone_gain_per_hour_map=stone_gain_per_hour_map,
+        )
+
+
+BREAKTHROUGH_RECIPE_CHAIN = [
+    ("foundation_pill", ""),
     ("golden_core_pill", "foundation_pill"),
     ("nascent_soul_pill", "golden_core_pill"),
     ("spirit_separation_pill", "nascent_soul_pill"),
@@ -226,7 +249,7 @@ def _init_realm_draft_state(realms_data: dict):
 def _get_high_tier_recipe_editor_df(recipes_data: dict) -> pd.DataFrame:
     recipes = recipes_data.get("recipes", {})
     rows = []
-    for recipe_id, lower_id in HIGH_TIER_CHAIN:
+    for recipe_id, lower_id in BREAKTHROUGH_RECIPE_CHAIN:
         recipe = recipes.get(recipe_id, {})
         materials = recipe.get("materials", {})
         rows.append(
@@ -234,8 +257,12 @@ def _get_high_tier_recipe_editor_df(recipes_data: dict) -> pd.DataFrame:
                 "recipe_id": recipe_id,
                 "丹药名称": str(recipe.get("name", recipe_id)),
                 "lower_pill_id": lower_id,
-                "低阶丹药数量": int(materials.get(lower_id, 1)),
-                "破境草数量": int(materials.get("foundation_herb", 1)),
+                "成功率(%)": int(recipe.get("success_value", 0)),
+                "耗时(秒)": int(float(recipe.get("base_time", 0))),
+                "消耗灵气": int(recipe.get("spirit_energy", 0)),
+                "低阶丹药数量": int(materials.get(lower_id, 0)) if lower_id else 0,
+                "草药数量": int(materials.get("mat_herb", 0)),
+                "破境草数量": int(materials.get("foundation_herb", 0)),
             }
         )
     return pd.DataFrame(rows)
@@ -488,14 +515,72 @@ def _build_draft_recipes(base_recipes: dict, recipe_rows: list[dict]) -> dict:
         recipe_id = str(row["recipe_id"])
         lower_id = str(row["lower_pill_id"])
         lower_count = int(row["低阶丹药数量"])
-        herb_count = int(row["破境草数量"])
+        mat_herb_count = int(row["草药数量"])
+        foundation_herb_count = int(row["破境草数量"])
         if recipe_id not in recipes:
             continue
-        recipes[recipe_id]["materials"] = {
-            "foundation_herb": herb_count,
-            lower_id: lower_count,
-        }
+        recipe = recipes[recipe_id]
+        recipe["success_value"] = max(0, min(100, int(row["成功率(%)"])))
+        recipe["base_time"] = float(max(1, int(row["耗时(秒)"])))
+        recipe["spirit_energy"] = max(0, int(row["消耗灵气"]))
+
+        next_materials: dict[str, int] = {}
+        if lower_id:
+            next_materials[lower_id] = max(1, lower_count)
+        if mat_herb_count > 0:
+            next_materials["mat_herb"] = mat_herb_count
+        if foundation_herb_count > 0:
+            next_materials["foundation_herb"] = foundation_herb_count
+        recipe["materials"] = next_materials
     return draft
+
+
+def _apply_breakthrough_recipe_ladder_rules(
+    rows: list[dict],
+    *,
+    foundation_success: int,
+    foundation_time: int,
+    foundation_spirit: int,
+    golden_success: int,
+    golden_time: int,
+    golden_spirit: int,
+    success_step: int,
+    time_step: int,
+    spirit_step: int,
+    lower_pill_count: int,
+    mat_herb_count: int,
+    foundation_herb_count: int,
+) -> list[dict]:
+    row_map = {str(row.get("recipe_id", "")): dict(row) for row in rows}
+    updated: list[dict] = []
+    for index, (recipe_id, lower_id) in enumerate(BREAKTHROUGH_RECIPE_CHAIN):
+        row = row_map.get(recipe_id, {"recipe_id": recipe_id, "丹药名称": recipe_id, "lower_pill_id": lower_id})
+        row["recipe_id"] = recipe_id
+        row["lower_pill_id"] = lower_id
+        if recipe_id == "foundation_pill":
+            row["成功率(%)"] = max(0, min(100, int(foundation_success)))
+            row["耗时(秒)"] = max(1, int(foundation_time))
+            row["消耗灵气"] = max(0, int(foundation_spirit))
+            row["低阶丹药数量"] = 0
+            row["草药数量"] = max(1, int(mat_herb_count))
+            row["破境草数量"] = max(1, int(foundation_herb_count))
+        elif recipe_id == "golden_core_pill":
+            row["成功率(%)"] = max(0, min(100, int(golden_success)))
+            row["耗时(秒)"] = max(1, int(golden_time))
+            row["消耗灵气"] = max(0, int(golden_spirit))
+            row["低阶丹药数量"] = max(1, int(lower_pill_count))
+            row["草药数量"] = max(1, int(mat_herb_count))
+            row["破境草数量"] = 0
+        else:
+            tier_step = index - 1
+            row["成功率(%)"] = max(0, min(100, int(golden_success - success_step * tier_step)))
+            row["耗时(秒)"] = max(1, int(golden_time + time_step * tier_step))
+            row["消耗灵气"] = max(0, int(golden_spirit + spirit_step * tier_step))
+            row["低阶丹药数量"] = max(1, int(lower_pill_count))
+            row["草药数量"] = max(1, int(mat_herb_count))
+            row["破境草数量"] = 0
+        updated.append(row)
+    return updated
 
 
 def _build_draft_realms(base_realms: dict) -> dict:
@@ -705,6 +790,30 @@ def _build_level_max_spirit_stone_gain_map(
                     best_spirit_stone_per_hour = spirit_stone_per_hour
             gain_map[f"{realm_name}:{level}"] = best_spirit_stone_per_hour
     return gain_map
+
+
+def _calc_foundation_herb_per_day(areas_data: dict) -> float:
+    daily_area = areas_data.get("daily_areas", {}).get("foundation_herb_cave", {})
+    templates = daily_area.get("enemies_template", [])
+    if not templates:
+        return 30.0
+
+    total_per_run = 0.0
+    for template in templates:
+        drops = template.get("drops", {})
+        herb_drop = drops.get("foundation_herb")
+        if not herb_drop:
+            continue
+        min_drop = float(herb_drop.get("min", 0))
+        max_drop = float(herb_drop.get("max", min_drop))
+        chance = float(herb_drop.get("chance", 1.0))
+        avg_drop = ((min_drop + max_drop) / 2.0) * chance
+        total_per_run += max(avg_drop, 0.0)
+
+    # 破境草洞穴默认每日可挑战 3 次；若后续在 areas 中显式配置 max_count，则优先用配置值。
+    run_limit = int(daily_area.get("max_count", 3))
+    per_day = total_per_run * max(run_limit, 0)
+    return per_day if per_day > 0 else 30.0
 
 
 def _format_stage_name(realms_data: dict, realm_name: str, level: int) -> str:
@@ -1038,18 +1147,22 @@ draft_stone_gain_map = _build_level_max_spirit_stone_gain_map(
     skill_coef=1.0,
     battle_interval_seconds=5.0,
 )
+base_foundation_herb_per_day = _calc_foundation_herb_per_day(base_areas_data)
+draft_foundation_herb_per_day = _calc_foundation_herb_per_day(draft_areas)
 base_display_df = _prepare_display_df(
-    build_time_rows_with_stone_gain(
+    _build_time_rows_with_stone_gain_safe(
         realms_data=base_realms_data,
         recipes_data=base_recipes_data,
         stone_gain_per_hour_map=base_stone_gain_map,
+        foundation_herb_per_day=base_foundation_herb_per_day,
     )
 )
 draft_display_df = _prepare_display_df(
-    build_time_rows_with_stone_gain(
+    _build_time_rows_with_stone_gain_safe(
         realms_data=draft_realms,
         recipes_data=draft_recipes,
         stone_gain_per_hour_map=draft_stone_gain_map,
+        foundation_herb_per_day=draft_foundation_herb_per_day,
     )
 )
 
@@ -1131,7 +1244,13 @@ page = PAGE_LABELS[current_page_key]
 
 if page == "修炼建模可视化":
     st.caption("当前页面展示的是“草稿预览效果”，包含未保存到文件的配置改动。")
-    st.caption("材料获取速率固定：foundation_herb = 30 / 天")
+    if abs(base_foundation_herb_per_day - draft_foundation_herb_per_day) < 1e-9:
+        st.caption(f"材料获取速率：foundation_herb = {format_number(draft_foundation_herb_per_day)} / 天")
+    else:
+        st.caption(
+            "材料获取速率（foundation_herb / 天）："
+            f"{format_number(base_foundation_herb_per_day)} -> {format_number(draft_foundation_herb_per_day)}"
+        )
     if not base_display_df.empty and not draft_display_df.empty:
         _render_compare_metrics(
             [
@@ -1630,37 +1749,44 @@ div[data-testid="stDataEditor"] table tbody td input {
         st.success(f"已保存：{ENEMIES_PATH}")
 
 elif page == "丹方配置（recipes）":
-    st.subheader("高阶破境丹方配置")
-    st.caption("仅支持修改：低阶丹药数量与破境草数量（必须为正整数）。")
+    st.subheader("破境丹方配置")
+    st.caption("支持单行手动编辑，也支持按阶梯规则批量生成。")
 
-    c1, c2, c3 = st.columns([1.2, 1.0, 1.0])
-    with c1:
-        batch_target = st.selectbox(
-            "批量修改字段",
-            options=["低阶丹药数量", "破境草数量"],
-            key="page3_batch_target",
-        )
-    with c2:
-        batch_value = int(
-            st.number_input(
-                "批量值",
-                min_value=1,
-                value=1,
-                step=1,
-                key="page3_batch_value",
-            )
-        )
-    with c3:
-        st.write("")
-        st.write("")
-        if st.button("应用到全部高阶丹方", key="page3_apply_batch"):
-            updated_rows = []
-            for row in st.session_state["draft_high_tier_recipe_rows"]:
-                new_row = dict(row)
-                new_row[batch_target] = batch_value
-                updated_rows.append(new_row)
-            st.session_state["draft_high_tier_recipe_rows"] = updated_rows
-            st.success(f"已将“{batch_target}”统一设置为 {batch_value}")
+    with st.expander("按阶梯规则批量生成", expanded=False):
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            foundation_success = int(st.number_input("筑基丹成功率(%)", min_value=0, max_value=100, value=60, step=1))
+            foundation_time = int(st.number_input("筑基丹耗时(秒)", min_value=1, value=30, step=1))
+            foundation_spirit = int(st.number_input("筑基丹消耗灵气", min_value=0, value=30, step=1))
+            foundation_herb_count = int(st.number_input("筑基丹破境草数量", min_value=1, value=3, step=1))
+        with c2:
+            golden_success = int(st.number_input("金丹丹成功率(%)", min_value=0, max_value=100, value=65, step=1))
+            golden_time = int(st.number_input("金丹丹耗时(秒)", min_value=1, value=40, step=1))
+            golden_spirit = int(st.number_input("金丹丹消耗灵气", min_value=0, value=40, step=1))
+            lower_pill_count = int(st.number_input("高阶丹药低阶丹数量", min_value=1, value=3, step=1))
+        with c3:
+            success_step = int(st.number_input("每阶成功率变化", value=5, step=1))
+            time_step = int(st.number_input("每阶耗时增加(秒)", min_value=0, value=10, step=1))
+            spirit_step = int(st.number_input("每阶灵气增加", min_value=0, value=10, step=1))
+            mat_herb_count = int(st.number_input("每阶草药数量", min_value=1, value=10, step=1))
+            st.write("")
+            if st.button("应用阶梯规则到全部破境丹方", key="page3_apply_ladder"):
+                st.session_state["draft_high_tier_recipe_rows"] = _apply_breakthrough_recipe_ladder_rules(
+                    st.session_state["draft_high_tier_recipe_rows"],
+                    foundation_success=foundation_success,
+                    foundation_time=foundation_time,
+                    foundation_spirit=foundation_spirit,
+                    golden_success=golden_success,
+                    golden_time=golden_time,
+                    golden_spirit=golden_spirit,
+                    success_step=success_step,
+                    time_step=time_step,
+                    spirit_step=spirit_step,
+                    lower_pill_count=lower_pill_count,
+                    mat_herb_count=mat_herb_count,
+                    foundation_herb_count=foundation_herb_count,
+                )
+                st.success("已按阶梯规则生成破境丹方参数。")
 
     recipe_df = pd.DataFrame(st.session_state["draft_high_tier_recipe_rows"])
     recipe_editor_key = "page3_recipe_editor"
@@ -1673,8 +1799,12 @@ elif page == "丹方配置（recipes）":
             "recipe_id": st.column_config.TextColumn("recipe_id"),
             "丹药名称": st.column_config.TextColumn("丹药名称"),
             "lower_pill_id": st.column_config.TextColumn("低阶丹药ID"),
-            "低阶丹药数量": st.column_config.NumberColumn("低阶丹药数量", min_value=1, step=1),
-            "破境草数量": st.column_config.NumberColumn("破境草数量", min_value=1, step=1),
+            "成功率(%)": st.column_config.NumberColumn("成功率(%)", min_value=0, max_value=100, step=1),
+            "耗时(秒)": st.column_config.NumberColumn("耗时(秒)", min_value=1, step=1),
+            "消耗灵气": st.column_config.NumberColumn("消耗灵气", min_value=0, step=1),
+            "低阶丹药数量": st.column_config.NumberColumn("低阶丹药数量", min_value=0, step=1),
+            "草药数量": st.column_config.NumberColumn("草药数量", min_value=0, step=1),
+            "破境草数量": st.column_config.NumberColumn("破境草数量", min_value=0, step=1),
         },
         key=recipe_editor_key,
     )
@@ -1686,8 +1816,12 @@ elif page == "丹方配置（recipes）":
                 "recipe_id": str(row["recipe_id"]),
                 "丹药名称": str(row["丹药名称"]),
                 "lower_pill_id": str(row["lower_pill_id"]),
-                "低阶丹药数量": max(1, int(row["低阶丹药数量"])),
-                "破境草数量": max(1, int(row["破境草数量"])),
+                "成功率(%)": max(0, min(100, int(row["成功率(%)"]))),
+                "耗时(秒)": max(1, int(row["耗时(秒)"])),
+                "消耗灵气": max(0, int(row["消耗灵气"])),
+                "低阶丹药数量": max(0, int(row["低阶丹药数量"])),
+                "草药数量": max(0, int(row["草药数量"])),
+                "破境草数量": max(0, int(row["破境草数量"])),
             }
         )
     st.session_state["draft_high_tier_recipe_rows"] = valid_rows

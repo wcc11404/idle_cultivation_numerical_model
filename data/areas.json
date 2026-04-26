@@ -309,8 +309,8 @@
                     "weight": 100,
                     "drops": {
                         "foundation_herb": {
-                            "min": 10,
-                            "max": 10,
+                            "min": 5,
+                            "max": 5,
                             "chance": 1.0
                         },
                         "spirit_stone": {
@@ -352,39 +352,44 @@
             "rewards": {
                 "5": {
                     "spirit_stone": 10,
-                    "health_pill": 3
-                },
-                "10": {
-                    "spirit_stone": 20,
+                    "health_pill": 1,
                     "spell_basic_breathing": 1
                 },
+                "10": {
+                    "spirit_stone": 17,
+                    "health_pill": 2,
+                    "spell_herb_gathering": 1
+                },
                 "15": {
-                    "spirit_stone": 30,
-                    "health_pill": 6
+                    "spirit_stone": 29,
+                    "health_pill": 3,
+                    "spell_basic_steps": 1
                 },
                 "20": {
-                    "spirit_stone": 60,
+                    "spirit_stone": 50,
                     "foundation_pill": 1
                 },
                 "25": {
-                    "spirit_stone": 90,
-                    "health_pill": 10
+                    "spirit_stone": 85,
+                    "health_pill": 5
                 },
                 "30": {
-                    "spirit_stone": 150,
-                    "spell_basic_steps": 1
+                    "spirit_stone": 145,
+                    "immortal_crystal": 35
                 },
                 "35": {
-                    "spirit_stone": 250
+                    "spirit_stone": 250,
+                    "golden_core_pill": 1
                 },
                 "40": {
-                    "spirit_stone": 410
+                    "spirit_stone": 425,
+                    "recipe_golden_core_pill": 1
                 },
                 "45": {
-                    "spirit_stone": 600
+                    "spirit_stone": 723
                 },
                 "50": {
-                    "spirit_stone": 1060
+                    "spirit_stone": 1250
                 }
             }
         }
