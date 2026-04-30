@@ -16,10 +16,10 @@
 
 ## 数据来源
 
-- `data/realms.json`：初始由服务端 `idle_cultivation_server/app/modules/cultivation/realms.json` 拷贝
-- `data/recipes.json`：初始由服务端 `idle_cultivation_server/app/modules/alchemy/recipes.json` 拷贝
-- `data/areas.json`：初始由服务端 `idle_cultivation_server/app/modules/lianli/areas.json` 拷贝
-- `data/enemies.json`：初始由服务端 `idle_cultivation_server/app/modules/lianli/enemies.json` 拷贝
+- `data/realms.json`：初始由服务端 `idle_cultivation_server/app/game/content/cultivation/realms.json` 拷贝
+- `data/recipes.json`：初始由服务端 `idle_cultivation_server/app/game/content/alchemy/recipes.json` 拷贝
+- `data/areas.json`：初始由服务端 `idle_cultivation_server/app/game/content/lianli/areas.json` 拷贝
+- `data/enemies.json`：初始由服务端 `idle_cultivation_server/app/game/content/lianli/enemies.json` 拷贝
 
 ## 建模说明
 
