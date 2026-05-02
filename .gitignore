@@ -52,6 +52,7 @@ data/*
 !data/areas.json
 !data/enemies.json
 !data/items.json
+!data/spells.json
 
 # Configuration files (local)
 .env
@@ -78,3 +79,6 @@ docs/build/
 *.njsproj
 *.sln
 *.sw?
+
+# npm cache
+.npm-cache/

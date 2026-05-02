@@ -7,11 +7,13 @@ from src.io.data_paths import (
     AREAS_PATH,
     ENEMIES_PATH,
     ITEMS_PATH,
+    SPELLS_PATH,
     SERVER_REALMS_PATH,
     SERVER_RECIPES_PATH,
     SERVER_AREAS_PATH,
     SERVER_ENEMIES_PATH,
     SERVER_ITEMS_PATH,
+    SERVER_SPELLS_PATH,
 )
 
 
@@ -27,6 +29,8 @@ def ensure_local_data() -> None:
         raise FileNotFoundError(f"missing local data file: {ENEMIES_PATH}")
     if not ITEMS_PATH.exists():
         raise FileNotFoundError(f"missing local data file: {ITEMS_PATH}")
+    if not SPELLS_PATH.exists():
+        raise FileNotFoundError(f"missing local data file: {SPELLS_PATH}")
 
 
 def sync_from_server() -> None:
@@ -35,6 +39,7 @@ def sync_from_server() -> None:
     _copy(SERVER_AREAS_PATH, AREAS_PATH)
     _copy(SERVER_ENEMIES_PATH, ENEMIES_PATH)
     _copy(SERVER_ITEMS_PATH, ITEMS_PATH)
+    _copy(SERVER_SPELLS_PATH, SPELLS_PATH)
 
 def _copy(src, dst) -> None:
     if not src.exists():

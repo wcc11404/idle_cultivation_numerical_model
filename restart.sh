@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
 PORT="${PORT:-8501}"
-HOST="${HOST:-localhost}"
+HOST="${HOST:-127.0.0.1}"
 
 if [ ! -d "venv" ]; then
   echo "[restart] venv 不存在，正在创建..."
@@ -22,10 +22,18 @@ if [ "$(uname)" = "Darwin" ]; then
   fi
 fi
 
-if ! ./venv/bin/python -c "import pandas, pytest, streamlit" >/dev/null 2>&1; then
-  echo "[restart] 正在安装依赖..."
+if ! ./venv/bin/python -c "import fastapi, uvicorn, pandas, pytest" >/dev/null 2>&1; then
+  echo "[restart] 正在安装 Python 依赖..."
   ./venv/bin/pip install -r requirements.txt
 fi
+
+if [ ! -d "web/node_modules" ]; then
+  echo "[restart] 正在安装前端依赖..."
+  (cd web && npm install)
+fi
+
+echo "[restart] 构建 React 前端..."
+(cd web && npm run build)
 
 OLD_PID="$(lsof -tiTCP:${PORT} -sTCP:LISTEN || true)"
 if [ -n "${OLD_PID}" ]; then
@@ -34,9 +42,7 @@ if [ -n "${OLD_PID}" ]; then
   sleep 1
 fi
 
-echo "[restart] 启动 Streamlit (热加载开启) -> http://${HOST}:${PORT}"
-exec ./venv/bin/streamlit run app.py \
-  --server.address "${HOST}" \
-  --server.port "${PORT}" \
-  --server.headless true \
-  --server.runOnSave true
+echo "[restart] 启动 FastAPI + React -> http://${HOST}:${PORT}"
+exec ./venv/bin/python -m uvicorn backend.app:app \
+  --host "${HOST}" \
+  --port "${PORT}"
