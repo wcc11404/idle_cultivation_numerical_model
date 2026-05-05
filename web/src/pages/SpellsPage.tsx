@@ -4,6 +4,13 @@ import { EditableTable } from '../components/EditableTable.js'
 import type { SpellsPayload } from '../types.js'
 import { cloneDeep, uniqueKeys } from '../utils.js'
 
+const PRIMARY_EFFECT_PREFIX = 'effect[0].'
+
+function normalizeText(value: unknown) {
+  if (value === null || value === undefined) return ''
+  return String(value)
+}
+
 function ratioOrDefault(numerator: number, denominator: number, fallback: number) {
   if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator <= 0) {
     return fallback
@@ -57,16 +64,18 @@ function buildRows(config: any, spellId: string) {
   return Object.entries(spell.levels ?? {})
     .sort((a, b) => Number(a[0]) - Number(b[0]))
     .map(([level, row]: [string, any]) => {
+      const primaryEffect = Array.isArray(row.effect) ? (row.effect[0] ?? {}) : (row.effect ?? {})
       const result: Record<string, any> = {
         level: Number(level),
         spirit_cost: row.spirit_cost,
         use_count_required: row.use_count_required,
+        effect_count: Array.isArray(row.effect) ? row.effect.length : (row.effect ? 1 : 0),
       }
       Object.entries(row.attribute_bonus ?? {}).forEach(([key, value]) => {
         result[`attribute_bonus.${key}`] = value
       })
-      Object.entries(row.effect ?? {}).forEach(([key, value]) => {
-        result[`effect.${key}`] = value
+      Object.entries(primaryEffect).forEach(([key, value]) => {
+        result[`${PRIMARY_EFFECT_PREFIX}${key}`] = value
       })
       return result
     })
@@ -79,21 +88,40 @@ function writeRows(config: any, spellId: string, rows: Record<string, any>[]) {
   const levels: Record<string, any> = {}
   rows.forEach((row) => {
     const level = String(row.level)
+    const originalRow = spell.levels?.[level] ?? {}
     const nextRow: Record<string, any> = {
+      ...cloneDeep(originalRow),
       spirit_cost: Number(row.spirit_cost),
       use_count_required: Number(row.use_count_required),
       attribute_bonus: {},
-      effect: {},
     }
+    const originalEffects = Array.isArray(originalRow.effect)
+      ? cloneDeep(originalRow.effect)
+      : originalRow.effect
+        ? [cloneDeep(originalRow.effect)]
+        : []
+    let primaryEffect = cloneDeep(originalEffects[0] ?? {})
+    let touchedPrimaryEffect = false
     Object.entries(row).forEach(([key, value]) => {
       if (key.startsWith('attribute_bonus.')) {
         nextRow.attribute_bonus[key.replace('attribute_bonus.', '')] = typeof value === 'number' ? value : Number(value)
       }
-      if (key.startsWith('effect.')) {
-        const subKey = key.replace('effect.', '')
-        nextRow.effect[subKey] = typeof value === 'number' ? value : (subKey === 'effect_type' || subKey === 'buff_type' || subKey === 'log_effect' ? value : Number(value))
+      if (key.startsWith(PRIMARY_EFFECT_PREFIX)) {
+        const subKey = key.replace(PRIMARY_EFFECT_PREFIX, '')
+        if (subKey === 'effect_count') return
+        touchedPrimaryEffect = true
+        primaryEffect[subKey] = typeof value === 'number'
+          ? value
+          : (subKey === 'effect_type' || subKey === 'buff_type' || subKey === 'log_effect' || subKey === 'description'
+              ? value
+              : Number(value))
       }
     })
+    if (touchedPrimaryEffect || originalEffects.length > 0) {
+      nextRow.effect = [primaryEffect, ...originalEffects.slice(1)]
+    } else {
+      nextRow.effect = []
+    }
     levels[level] = nextRow
   })
   spell.levels = levels
@@ -138,8 +166,12 @@ export function SpellsPage({ payload, onChanged, onSaved }: { payload: SpellsPay
       { key: 'level', label: 'level', readOnly: true as const, width: '80px' },
       { key: 'spirit_cost', label: 'spirit_cost', type: 'number' as const, min: 0 },
       { key: 'use_count_required', label: 'use_count_required', type: 'number' as const, min: 0 },
+      { key: 'effect_count', label: 'effect_count', readOnly: true as const, width: '110px' },
     ]
     const extras = extraKeys.map((key) => {
+      if (key === 'effect_count') {
+        return { key, label: key, readOnly: true as const, width: '110px' }
+      }
       const sample = rows.find((row) => row[key] !== undefined)?.[key]
       return {
         key,
@@ -197,7 +229,7 @@ export function SpellsPage({ payload, onChanged, onSaved }: { payload: SpellsPay
     <div className="page-stack">
       <header className="page-header">
         <h2>术法配置（spells）</h2>
-        <p>灵气批量改为 2-4 共用一套递推倍率、5 级及以后再走另一套递推倍率；熟练度批量改为 2-4 共用一套递推倍率、5 级及以后再走另一套递推倍率，同时保留 attribute_bonus / effect 手调能力。</p>
+        <p>已适配新的术法配置结构：保留 rarity / element / max_star / stars / 多 effect 列表。表格仍主要编辑每级灵气、熟练度、attribute_bonus，以及第一个 effect；其余 effect 与 stars 会原样保留。</p>
       </header>
       <section className="card card-grid two-up align-start">
         <label className="field">
@@ -211,8 +243,12 @@ export function SpellsPage({ payload, onChanged, onSaved }: { payload: SpellsPay
         <div className="meta-block">
           <div><strong>当前术法：</strong>{selectedSpell?.name ?? selectedSpellId}</div>
           <div><strong>类型：</strong>{selectedSpell?.type ?? '-'}</div>
+          <div><strong>稀有度：</strong>{normalizeText(selectedSpell?.rarity) || '-'}</div>
+          <div><strong>五行：</strong>{normalizeText(selectedSpell?.element) || '-'}</div>
           <div><strong>当前 max_level：</strong>{selectedSpell?.max_level ?? '-'}</div>
+          <div><strong>当前 max_star：</strong>{selectedSpell?.max_star ?? '-'}</div>
           <div><strong>配置等级：</strong>{Object.keys(selectedSpell?.levels ?? {}).length}</div>
+          <div><strong>星级配置：</strong>{Object.keys(selectedSpell?.stars ?? {}).length}</div>
         </div>
       </section>
       <section className="card card-grid two-up">
